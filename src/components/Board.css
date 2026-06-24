@@ -1,0 +1,79 @@
+.suspect {
+  position: relative;
+}
+
+.suspect .MuiCard-root {
+  transition: all 0.3s ease-out;
+}
+
+.suspect::before {
+  content: "";
+  display: block;
+  width: 5em;
+  height: 2em;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  margin: auto;
+  z-index: 1;
+  background: rgba(255, 255, 200, 0.4);
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
+  transform: translate(-50%, -10%);
+}
+
+.suspect .stamp {
+  font-size: 2em;
+  font-family: "kingthings_trypewriter_2Rg";
+  position: absolute;
+  width: 100%;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  text-align: center;
+  font-weight: bold;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  color: #00000080;
+  text-shadow: 1px -1px rgba(0, 0, 0, 0.7), -1px 1px rgba(255, 255, 255, 0.7);
+}
+
+.signature {
+  display: flex;
+  flex-direction: column;
+  font-family: "Shadows Into Light";
+}
+
+.signature .sign {
+  font-size: 1.25em;
+  color: #3da9fc;
+  letter-spacing: 0;
+}
+
+.signature .text {
+  font-family: "kingthings_trypewriter_2Rg";
+  font-size: 0.5em;
+  line-height: 1.2;
+  word-spacing: 5px;
+  border-top: 1px dashed #091619;
+}
+
+.analysis .type {
+  font-family: "kingthings_trypewriter_2Rg";
+  margin-right: 0.5em;
+}
+
+.analysis .text {
+  font-family: "Shadows Into Light";
+  font-weight: bold;
+  font-size: 1.5em;
+  color: #3da9fc;
+  display: inline-block;
+}
+
+.finished {
+  margin-top: 1em;
+  font-size: 2em;
+  color: #ff5252;
+  font-weight: bold;
+  font-family: "Shadows Into Light";
+}

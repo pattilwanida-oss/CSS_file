@@ -1,0 +1,91 @@
+.app-root {
+  min-height: 100vh;
+  background: url('./assets/bg.png') no-repeat fixed top center;
+  background-size: cover;
+  color: #5f6c7b;
+}
+
+.app-root code {
+  letter-spacing: 1px;
+  font-family: "kingthings_trypewriter_2Rg", serif;
+}
+
+.app-root .display-2 {
+  font-family: "kingthings_trypewriter_2Rg", serif;
+  font-size: 3rem;
+  font-weight: 400;
+  color: #094067;
+  letter-spacing: -2px;
+  word-spacing: -10px;
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+}
+
+.app-root .display-1 {
+  font-family: "kingthings_trypewriter_2Rg", serif;
+  font-size: 2.125rem;
+  font-weight: 400;
+  letter-spacing: -2px;
+  word-spacing: -10px;
+  line-height: 1.3;
+}
+
+.app-root .subtitle-1 {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.75;
+}
+
+/* Page transitions */
+.page-enter {
+  opacity: 0;
+}
+
+.page-enter-active {
+  opacity: 1;
+  transition: opacity 0.3s cubic-bezier(0.4, 0.1, 0.7, 0.95);
+}
+
+.page-exit {
+  display: none;
+}
+
+/* Card torn paper effect */
+.MuiCardContent-root {
+  position: relative;
+}
+
+.MuiCardContent-root::before,
+.MuiCardContent-root::after {
+  content: "";
+  height: 2px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.05);
+  clip-path: polygon(
+    0% 0%, 5% 100%, 10% 0%, 15% 100%, 20% 0%, 25% 100%, 30% 0%, 35% 100%,
+    40% 0%, 45% 100%, 50% 0%, 55% 100%, 60% 0%, 65% 100%, 70% 0%, 75% 100%,
+    80% 0%, 85% 100%, 90% 0%, 95% 100%, 100% 0%
+  );
+}
+
+.MuiCardContent-root::before {
+  background-color: #fff;
+  top: 0;
+}
+
+.MuiCardContent-root::after {
+  height: 4px;
+  background-color: #fff;
+  bottom: -3px;
+}
+
+/* Accent color utility */
+.accent-text {
+  color: #ef4565 !important;
+}
+
+.text-uppercase {
+  text-transform: uppercase;
+}
