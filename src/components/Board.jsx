@@ -95,9 +95,9 @@ export default function Board() {
                     }}
                   >
                     {game.murderer === player.index ? (
-                      <span style={{ color: '#f44336' }}>Murderer</span>
+                      <span style={{ color: '#ef4565', textShadow: '0 0 10px rgba(239, 69, 101, 0.8)' }}>Murderer</span>
                     ) : (
-                      <span>Detective</span>
+                      <span style={{ color: '#2962ff', textShadow: '0 0 10px rgba(41, 98, 255, 0.8)' }}>Detective</span>
                     )}
                   </div>
                 )}
@@ -149,7 +149,11 @@ export default function Board() {
                             key={index}
                             label={mean}
                             size="small"
-                            sx={{ bgcolor: '#bbdefb' }}
+                            sx={{ 
+                              bgcolor: 'rgba(41, 98, 255, 0.1)', 
+                              color: '#2962ff',
+                              border: '1px solid rgba(41, 98, 255, 0.3)'
+                            }}
                           />
                         ))}
                     </Box>
@@ -162,7 +166,11 @@ export default function Board() {
                             key={'clue' + index}
                             label={clue}
                             size="small"
-                            sx={{ bgcolor: '#ffcdd2' }}
+                            sx={{ 
+                              bgcolor: 'rgba(239, 69, 101, 0.1)', 
+                              color: '#ef4565',
+                              border: '1px solid rgba(239, 69, 101, 0.3)'
+                            }}
                           />
                         ))}
                     </Box>

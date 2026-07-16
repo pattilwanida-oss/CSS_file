@@ -308,6 +308,7 @@ async function checkEndGame(gamekey) {
     game.guesses.filter(
       (item) =>
         item &&
+        item.player === game.murderer &&
         item.mean === game.murdererChoice?.mean &&
         item.key === game.murdererChoice?.key
     ).length > 0
@@ -648,3 +649,6 @@ export default {
     return await checkEndGame(gamekey);
   }
 };
+
+// Export for testing
+export const _testing = { games, checkEndGame };

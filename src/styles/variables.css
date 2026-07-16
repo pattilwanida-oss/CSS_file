@@ -7,14 +7,18 @@
 }
 
 :root {
-  --black: #5f6c7b;
-  --darkblue: #094067;
+  --black: #0f172a;
+  --darkblue: #1e293b;
   --accent: #ef4565;
-  --secondary: #3da9fc;
-  --primary: #094067;
+  --secondary: #0f172a;
+  --primary: #2962ff;
+  --text-main: #f8fafc;
+  --text-muted: #cbd5e1;
 }
 
 body {
   margin: 0;
   font-family: "IBM Plex Mono", monospace;
+  background-color: var(--black);
+  color: var(--text-main);
 }

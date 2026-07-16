@@ -102,7 +102,11 @@ export default function Detective({ game, player, view }) {
               key={index}
               label={mean}
               size="small"
-              sx={{ bgcolor: '#bbdefb' }}
+              sx={{ 
+                bgcolor: 'rgba(41, 98, 255, 0.1)', 
+                color: '#2962ff', 
+                border: '1px solid rgba(41, 98, 255, 0.5)' 
+              }}
             />
           ))}
         </Box>
@@ -112,7 +116,11 @@ export default function Detective({ game, player, view }) {
               key={'clue' + index}
               label={clue}
               size="small"
-              sx={{ bgcolor: '#ffcdd2' }}
+              sx={{ 
+                bgcolor: 'rgba(239, 69, 101, 0.1)', 
+                color: '#ef4565', 
+                border: '1px solid rgba(239, 69, 101, 0.5)' 
+              }}
             />
           ))}
         </Box>
@@ -182,7 +190,11 @@ export default function Detective({ game, player, view }) {
                           </>
                         }
                         size="small"
-                        sx={{ bgcolor: '#bbdefb', opacity: 1 }}
+                        sx={{ 
+                          bgcolor: guess.mean === mean ? 'rgba(41, 98, 255, 0.4)' : 'rgba(41, 98, 255, 0.1)', 
+                          color: '#2962ff', 
+                          border: '1px solid rgba(41, 98, 255, 0.5)' 
+                        }}
                         variant={
                           guess.mean === mean ? 'filled' : 'outlined'
                         }
@@ -226,7 +238,11 @@ export default function Detective({ game, player, view }) {
                           </>
                         }
                         size="small"
-                        sx={{ bgcolor: '#ffcdd2', opacity: 1 }}
+                        sx={{ 
+                          bgcolor: guess.key === clue ? 'rgba(239, 69, 101, 0.4)' : 'rgba(239, 69, 101, 0.1)', 
+                          color: '#ef4565', 
+                          border: '1px solid rgba(239, 69, 101, 0.5)' 
+                        }}
                         variant={
                           guess.key === clue ? 'filled' : 'outlined'
                         }

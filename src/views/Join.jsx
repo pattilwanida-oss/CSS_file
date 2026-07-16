@@ -74,6 +74,12 @@ export default function Join() {
                   label={t('Game code')}
                   variant="filled"
                   required
+                  sx={{ 
+                    input: { color: '#fff' }, 
+                    label: { color: 'rgba(255,255,255,0.7)' },
+                    background: 'rgba(0,0,0,0.2)',
+                    borderRadius: '4px' 
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
@@ -84,31 +90,57 @@ export default function Join() {
                   label={t('Your nickname')}
                   variant="filled"
                   required
+                  sx={{ 
+                    input: { color: '#fff' }, 
+                    label: { color: 'rgba(255,255,255,0.7)' },
+                    background: 'rgba(0,0,0,0.2)',
+                    borderRadius: '4px'
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={6} sx={{ display: { lg: 'flex' } }}>
                 <Button
                   component={Link}
                   to="/"
-                  variant="contained"
                   size="large"
                   sx={{
                     mr: 2,
                     mb: { xs: 2, lg: 0 },
-                    bgcolor: '#fafafa',
-                    color: '#094067',
-                    '&:hover': { bgcolor: '#e0e0e0' },
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(15px)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
+                    '&:hover': {
+                      background: 'rgba(255, 255, 255, 0.25)',
+                      borderColor: 'rgba(255,255,255,0.4)',
+                    },
                   }}
                 >
-                  <ArrowBack sx={{ color: '#ef4565' }} />
+                  <ArrowBack sx={{ color: '#fff' }} />
                 </Button>
                 <Button
                   disabled={disabled}
                   type="submit"
-                  variant="contained"
                   size="large"
-                  color="error"
-                  sx={{ mb: 2 }}
+                  sx={{ 
+                    mb: 2,
+                    background: 'rgba(255, 100, 100, 0.2)',
+                    backdropFilter: 'blur(15px)',
+                    border: '1px solid rgba(255, 100, 100, 0.3)',
+                    color: '#fff',
+                    boxShadow: '0 4px 30px rgba(255, 0, 0, 0.1)',
+                    textTransform: 'none',
+                    fontSize: '1.1rem',
+                    padding: '10px 24px',
+                    '&:hover': {
+                      background: 'rgba(255, 100, 100, 0.35)',
+                      borderColor: 'rgba(255, 100, 100, 0.5)',
+                    },
+                    '&.Mui-disabled': {
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      color: 'rgba(255, 255, 255, 0.3)',
+                    }
+                  }}
                 >
                   {t('Enter game')}
                 </Button>

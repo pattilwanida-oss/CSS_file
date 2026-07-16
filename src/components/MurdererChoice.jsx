@@ -56,7 +56,12 @@ export default function MurdererChoice({ game, player, onChoice }) {
                     </>
                   }
                   size="small"
-                  sx={{ bgcolor: '#bbdefb', opacity: 1 }}
+                  sx={{ 
+                    bgcolor: murdererChoice.mean === mean ? 'rgba(41, 98, 255, 0.4)' : 'rgba(41, 98, 255, 0.1)', 
+                    color: '#2962ff', 
+                    border: '1px solid rgba(41, 98, 255, 0.5)',
+                    opacity: 1 
+                  }}
                   disabled={!!game.murdererChoice}
                   variant={murdererChoice.mean === mean ? 'filled' : 'outlined'}
                   onClick={() =>
@@ -85,7 +90,12 @@ export default function MurdererChoice({ game, player, onChoice }) {
                     </>
                   }
                   size="small"
-                  sx={{ bgcolor: '#ffcdd2', opacity: 1 }}
+                  sx={{ 
+                    bgcolor: murdererChoice.key === clue ? 'rgba(239, 69, 101, 0.4)' : 'rgba(239, 69, 101, 0.1)', 
+                    color: '#ef4565', 
+                    border: '1px solid rgba(239, 69, 101, 0.5)',
+                    opacity: 1 
+                  }}
                   disabled={!!game.murdererChoice}
                   variant={murdererChoice.key === clue ? 'filled' : 'outlined'}
                   onClick={() =>
