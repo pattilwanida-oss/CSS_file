@@ -5,7 +5,6 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import App from './App';
 import { GameProvider } from './store/GameContext';
-import { TranslateProvider } from './i18n/TranslateContext';
 import theme from './theme';
 import './styles/variables.css';
 
@@ -14,11 +13,9 @@ ReactDOM.createRoot(document.getElementById('app')).render(
     <BrowserRouter>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <TranslateProvider>
-          <GameProvider>
-            <App />
-          </GameProvider>
-        </TranslateProvider>
+        <GameProvider>
+          <App />
+        </GameProvider>
       </ThemeProvider>
     </BrowserRouter>
   </React.StrictMode>

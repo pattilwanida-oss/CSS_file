@@ -501,10 +501,20 @@ export default {
     if (!game) return { error: 'Game not found' };
 
     const existingPlayer = Object.values(game.players || {}).find(
-      (p) => p.slug === slug
+      (p) => p.slug === slug || p.name.toLowerCase() === nickname.toLowerCase()
     );
-    if (existingPlayer && game.started) {
-      return { game, player: existingPlayer };
+
+    const playerCount = Object.keys(game.players || {}).length;
+    if (playerCount >= 12 && !existingPlayer) {
+      return { error: 'ห้องนี่เต็มแล้ว' };
+    }
+
+    if (existingPlayer) {
+      if (game.started) {
+        return { game, player: existingPlayer };
+      } else {
+        return { error: 'Nickname already taken in this room' };
+      }
     } else if (game.started) {
       return { error: 'Game has already started and no new players can join' };
     }
