@@ -1,0 +1,116 @@
+/* GamePlayLayout.css */
+
+.game-play-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 73px); /* Fallback */
+  height: calc(100dvh - 73px); /* Modern mobile browsers */
+  position: relative;
+}
+
+.game-play-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* PC Layout: Horizontal Scroll */
+.game-play-layout.desktop-layout {
+  flex-direction: row;
+}
+
+.desktop-layout .game-play-layout__sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--color-border-subtle);
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.desktop-layout .game-play-layout__players {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  gap: 24px;
+  padding: 24px;
+  flex: 1;
+  align-items: flex-start;
+}
+
+/* Mobile Layout: Horizontal Scroll */
+.game-play-layout.mobile-layout {
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.mobile-layout .game-play-layout__sidebar {
+  padding: 12px;
+  border-bottom: 1px solid var(--color-border-subtle);
+  max-height: 160px;
+  overflow-y: auto;
+  position: relative;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.mobile-layout .game-play-layout__players {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  gap: 12px;
+  padding: 12px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-layout .game-play-layout__players > * {
+  min-width: 85vw;
+  max-width: 85vw;
+  flex-shrink: 0;
+  scroll-snap-align: center;
+}
+
+.mobile-layout .game-play-layout__players::after {
+  content: '';
+  min-width: 1px;
+  flex-shrink: 0;
+}
+
+
+/* Common Player Panel Cards Grid */
+.player-panel__cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 600px) {
+  .player-panel__cards {
+    gap: 4px;
+  }
+}
+
+/* Global utility for card grid */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 600px) {
+  .card-grid {
+    gap: 4px;
+  }
+}
+
+/* Global utility for card grid */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 600px) {
+  .card-grid {
+    gap: 4px;
+  }
+}

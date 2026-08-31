@@ -10,18 +10,12 @@ import {
   Typography,
 } from '@mui/material';
 import { useGame } from '@/store/GameContext';
-import { useTranslate } from '@/i18n/TranslateContext';
+
 import './Board.css';
+import GameCard from './GameCard';
 
 export default function Board() {
   const { game } = useGame();
-  const { t, setLang } = useTranslate();
-
-  useEffect(() => {
-    if (game && game.lang) {
-      setLang(game.lang);
-    }
-  }, [game]);
 
   const players = useMemo(() => {
     if (!game || !game.players) return false;
@@ -58,11 +52,11 @@ export default function Board() {
   return (
     <Container sx={{ height: '100%' }}>
       <Grid container sx={{ height: '100%' }} alignItems="center" spacing={2}>
-        <Grid item md={9}>
+        <Grid item md={9} className="corkboard-bg" sx={{ p: { xs: 2, md: 4 }, borderRadius: 'var(--radius-xl)' }}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Typography variant="h3">
-                {t('Game')}{' '}
+                เกม{' '}
                 <code style={{ color: '#ff5252', textTransform: 'uppercase' }}>
                   {game.gameId}
                 </code>
@@ -71,11 +65,11 @@ export default function Board() {
                   variant="body1"
                   sx={{ ml: { lg: 2 } }}
                 >
-                  {t('Round')} {game.round} {t('of')} 3
+                  รอบที่ {game.round} จาก 3
                 </Typography>
               </Typography>
               <Typography variant="h4" sx={{ my: 2 }}>
-                {t('Suspects of the crime:')}
+                ผู้ต้องสงสัยในคดี:
               </Typography>
             </Grid>
 
@@ -95,9 +89,9 @@ export default function Board() {
                     }}
                   >
                     {game.murderer === player.index ? (
-                      <span style={{ color: '#f44336' }}>Murderer</span>
+                      <span style={{ color: '#ef4565', textShadow: '0 0 10px rgba(239, 69, 101, 0.8)' }}>Murderer</span>
                     ) : (
-                      <span>Detective</span>
+                      <span style={{ color: '#2962ff', textShadow: '0 0 10px rgba(41, 98, 255, 0.8)' }}>Detective</span>
                     )}
                   </div>
                 )}
@@ -117,7 +111,7 @@ export default function Board() {
                           fontWeight: 'bold',
                         }}
                       >
-                        {t('Passed this turn')}
+                        ผ่านเทิร์นนี้
                       </div>
                     )}
 
@@ -130,40 +124,30 @@ export default function Board() {
                           color: '#5f6c7b',
                         }}
                       >
-                        {t('Guessed that the murderer was')}{' '}
+                        เดาว่าฆาตกรคือ{' '}
                         {players[game.guesses[player.index].player].name},{' '}
-                        {t('the M.O. was')}{' '}
+                        วิธีการฆาตกรรมคือ{' '}
                         {game.guesses[player.index].mean}{' '}
-                        {t('and the key evidence was')}{' '}
+                        และหลักฐานสำคัญคือ{' '}
                         {game.guesses[player.index].key}
                       </div>
                     )}
 
                     <Divider sx={{ my: 1 }} />
 
-                    <Box display="flex" flexWrap="wrap" gap={0.5}>
+                    <Box className="card-grid" gap={0.5}>
                       {[...game.means]
                         .slice(player.index * 4, player.index * 4 + 4)
                         .map((mean, index) => (
-                          <Chip
-                            key={index}
-                            label={mean}
-                            size="small"
-                            sx={{ bgcolor: '#bbdefb' }}
-                          />
+                          <GameCard key={index} name={mean} type="means" disabled />
                         ))}
                     </Box>
 
-                    <Box display="flex" flexWrap="wrap" gap={0.5} mt={1}>
+                    <Box className="card-grid" gap={0.5} mt={1}>
                       {[...game.clues]
                         .slice(player.index * 4, player.index * 4 + 4)
                         .map((clue, index) => (
-                          <Chip
-                            key={'clue' + index}
-                            label={clue}
-                            size="small"
-                            sx={{ bgcolor: '#ffcdd2' }}
-                          />
+                          <GameCard key={'clue' + index} name={clue} type="clues" disabled />
                         ))}
                     </Box>
                   </CardContent>
@@ -183,12 +167,12 @@ export default function Board() {
 
         <Grid item md={3}>
           <Typography variant="h4" sx={{ mb: 2 }}>
-            {t('Analysis')}
+            การวิเคราะห์
             <div className="signature">
               <span className="sign">
                 {game.detective === -1 ? 'AI System' : players[game.detective]?.name}
               </span>
-              <span className="text">{game.detective === -1 ? 'AI Game Master' : t('Forensic Scientist')}</span>
+              <span className="text">{game.detective === -1 ? 'AI Game Master' : 'นักนิติวิทยาศาสตร์'}</span>
             </div>
           </Typography>
           <div className="subtitle-1" />

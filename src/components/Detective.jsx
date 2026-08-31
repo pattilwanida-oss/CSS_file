@@ -20,12 +20,11 @@ import {
 } from '@mui/material';
 import { Check, ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import { useGame } from '@/store/GameContext';
-import { useTranslate } from '@/i18n/TranslateContext';
 import MurdererChoice from './MurdererChoice';
+import GameCard from './GameCard';
 
 export default function Detective({ game, player, view }) {
   const { actions } = useGame();
-  const { t } = useTranslate();
 
   const [guess, setGuess] = useState({ player: null, mean: null, key: null });
 
@@ -39,10 +38,10 @@ export default function Detective({ game, player, view }) {
 
   const playerRole = useMemo(() => {
     if (player.index === game.murderer) {
-      return t('the murderer');
+      return 'ฆาตกร';
     }
-    return t('a detective');
-  }, [player.index, game.murderer, t]);
+    return 'นักสืบ';
+  }, [player.index, game.murderer]);
 
   const players = useMemo(() => {
     return Object.keys(game.players)
@@ -78,14 +77,14 @@ export default function Detective({ game, player, view }) {
   const renderCards = () => (
     <Accordion defaultExpanded sx={{ mb: 2 }}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography variant="h6">{t('My Role & Cards')}</Typography>
+        <Typography variant="h6">บทบาทและการ์ดของฉัน</Typography>
       </AccordionSummary>
       <AccordionDetails>
         <Typography variant="h5" sx={{ mb: 2 }}>
           {player.name}
         </Typography>
         <Divider sx={{ my: 1 }} />
-        <Typography variant="subtitle2">{t('Role')}: {playerRole}</Typography>
+        <Typography variant="subtitle2">บทบาท: {playerRole}</Typography>
         {player.index === game.murderer && (
           <Box sx={{ mt: 2 }}>
             <MurdererChoice
@@ -96,24 +95,14 @@ export default function Detective({ game, player, view }) {
           </Box>
         )}
         <Divider sx={{ my: 1 }} />
-        <Box display="flex" flexWrap="wrap" gap={0.5}>
+        <Box className="card-grid" gap={0.5}>
           {means.map((mean, index) => (
-            <Chip
-              key={index}
-              label={mean}
-              size="small"
-              sx={{ bgcolor: '#bbdefb' }}
-            />
+            <GameCard key={index} name={mean} type="means" disabled />
           ))}
         </Box>
-        <Box display="flex" flexWrap="wrap" gap={0.5} mt={1}>
+        <Box className="card-grid" gap={0.5} mt={1}>
           {clues.map((clue, index) => (
-            <Chip
-              key={'clue' + index}
-              label={clue}
-              size="small"
-              sx={{ bgcolor: '#ffcdd2' }}
-            />
+            <GameCard key={'clue' + index} name={clue} type="clues" disabled />
           ))}
         </Box>
       </AccordionDetails>
@@ -123,19 +112,19 @@ export default function Detective({ game, player, view }) {
   const renderActions = () => (
     <Accordion defaultExpanded>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography variant="h6">{t('Solve the crime')}</Typography>
+        <Typography variant="h6">ไขคดี</Typography>
       </AccordionSummary>
       <AccordionDetails>
         <Button onClick={handlePassTurn} disabled={disableActions} color="secondary" variant="outlined" sx={{ mb: 2 }}>
-          {t('Pass turn')}
+          ข้ามเทิร์น
         </Button>
         <Divider sx={{ mb: 2 }} />
-        <Typography>{t('Who is the murderer?')}</Typography>
+        <Typography>ใครคือฆาตกร?</Typography>
         <FormControl fullWidth sx={{ mt: 2 }} disabled={disableActions}>
-          <InputLabel>{t('Who is the murderer?')}</InputLabel>
+          <InputLabel>ใครคือฆาตกร?</InputLabel>
           <Select
             value={guess.player ?? ''}
-            label={t('Who is the murderer?')}
+            label="ใครคือฆาตกร?"
             onChange={(e) =>
               setGuess((prev) => ({
                 ...prev,
@@ -156,36 +145,21 @@ export default function Detective({ game, player, view }) {
             <Grid item xs={12} md={6}>
               <Box sx={{ textAlign: 'left' }}>
                 <Typography>
-                  {t('Select the means of murder:')}
+                  เลือกอาวุธสังหาร:
                 </Typography>
-                <Box display="flex" flexWrap="wrap" gap={0.5} mt={1}>
+                <Box className="card-grid" gap={0.5} mt={1}>
                   {[...game.means]
                     .slice(
                       selectedPlayer.index * 4,
                       selectedPlayer.index * 4 + 4
                     )
                     .map((mean, index) => (
-                      <Chip
+                      <GameCard
                         key={index}
-                        label={
-                          <>
-                            {guess.mean === mean && (
-                              <Check
-                                fontSize="small"
-                                sx={{
-                                  mr: 0.5,
-                                  verticalAlign: 'middle',
-                                }}
-                              />
-                            )}
-                            {mean}
-                          </>
-                        }
-                        size="small"
-                        sx={{ bgcolor: '#bbdefb', opacity: 1 }}
-                        variant={
-                          guess.mean === mean ? 'filled' : 'outlined'
-                        }
+                        name={mean}
+                        type="means"
+                        selected={guess.mean === mean}
+                        disabled={disableActions}
                         onClick={() =>
                           !disableActions && setGuess((prev) => ({
                             ...prev,
@@ -200,36 +174,21 @@ export default function Detective({ game, player, view }) {
             <Grid item xs={12} md={6}>
               <Box sx={{ textAlign: 'left' }}>
                 <Typography>
-                  {t('Select the key evidence:')}
+                  เลือกหลักฐานสำคัญ:
                 </Typography>
-                <Box display="flex" flexWrap="wrap" gap={0.5} mt={1}>
+                <Box className="card-grid" gap={0.5} mt={1}>
                   {[...game.clues]
                     .slice(
                       selectedPlayer.index * 4,
                       selectedPlayer.index * 4 + 4
                     )
                     .map((clue, index) => (
-                      <Chip
+                      <GameCard
                         key={index}
-                        label={
-                          <>
-                            {guess.key === clue && (
-                              <Check
-                                fontSize="small"
-                                sx={{
-                                  mr: 0.5,
-                                  verticalAlign: 'middle',
-                                }}
-                              />
-                            )}
-                            {clue}
-                          </>
-                        }
-                        size="small"
-                        sx={{ bgcolor: '#ffcdd2', opacity: 1 }}
-                        variant={
-                          guess.key === clue ? 'filled' : 'outlined'
-                        }
+                        name={clue}
+                        type="clues"
+                        selected={guess.key === clue}
+                        disabled={disableActions}
                         onClick={() =>
                           !disableActions && setGuess((prev) => ({
                             ...prev,
@@ -246,7 +205,7 @@ export default function Detective({ game, player, view }) {
 
         <Box sx={{ mt: 2 }}>
           <Button variant="contained" onClick={handleSendGuess} disabled={disableActions || guess.player === null || !guess.mean || !guess.key}>
-            {t('Send guess')}
+            ส่งการเดา
           </Button>
         </Box>
       </AccordionDetails>

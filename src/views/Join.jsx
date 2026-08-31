@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
-import { Container, Grid, Button, TextField, Alert } from '@mui/material';
+import { Container, Box, Button, TextField, Alert, Typography, Paper } from '@mui/material';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import { useGame } from '@/store/GameContext';
-import { useTranslate } from '@/i18n/TranslateContext';
+
 
 export default function Join() {
   const { actions } = useGame();
-  const { t } = useTranslate();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -45,78 +44,132 @@ export default function Join() {
   };
 
   return (
-    <Container sx={{ height: '100%' }}>
-      <Grid
-        container
-        sx={{ height: '100%' }}
-        alignItems="center"
-        justifyContent="center"
-      >
+    <Box sx={{ 
+      minHeight: '100vh', 
+      display: 'flex', 
+      alignItems: 'center', 
+      justifyContent: 'center',
+      p: 3
+    }}>
+      <Container maxWidth="sm">
         {error && errorText && (
-          <Grid item xs={12}>
-            <Alert severity="error" onClose={() => setError(false)}>
-              {errorText}
-            </Alert>
-          </Grid>
+          <Alert severity="error" onClose={() => setError(false)} sx={{ mb: 3 }}>
+            {errorText === "Nickname already taken in this room" ? "ชื่อนี้ถูกใช้ไปแล้วในห้องนี้" : errorText}
+          </Alert>
         )}
-        <Grid item xs={12} md={6} sx={{ mt: 3 }}>
-          <h2 className="display-2">{t('Join game')}</h2>
-          <p className="subtitle-1" style={{ margin: '1rem 0' }}>
-            {t('Enter a game code and a nickname to join a game:')}
-          </p>
+        
+        <Paper 
+          elevation={0}
+          sx={{
+            p: { xs: 3, sm: 5 },
+            background: 'var(--color-surface)',
+            backdropFilter: 'blur(24px)',
+            border: '1px solid var(--color-border-subtle)',
+            borderRadius: 'var(--radius-xl)',
+            boxShadow: 'var(--shadow-elevated)',
+            position: 'relative',
+            overflow: 'hidden'
+          }}
+        >
+          {/* Subtle top border accent */}
+          <Box sx={{
+            position: 'absolute',
+            top: 0, left: 0, right: 0, height: '2px',
+            background: 'linear-gradient(90deg, transparent, var(--color-accent), transparent)',
+            opacity: 0.5
+          }} />
+
+          {/* Header */}
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <Button
+              component={Link}
+              to="/"
+              size="small"
+              sx={{
+                minWidth: 'auto',
+                p: 1,
+                mr: 2,
+                color: 'var(--color-ink-muted)',
+                border: '1px solid var(--color-border-subtle)',
+                borderRadius: 'var(--radius-md)',
+                '&:hover': {
+                  background: 'rgba(255,255,255,0.05)',
+                  color: 'white',
+                },
+              }}
+            >
+              <ArrowBack fontSize="small" />
+            </Button>
+            <Typography variant="h4" sx={{ fontFamily: '"Chakra Petch", sans-serif', m: 0 }}>
+              เข้าร่วมห้อง
+            </Typography>
+          </Box>
+          <Typography variant="body2" sx={{ color: 'var(--color-ink-muted)', mb: 4, ml: 7, letterSpacing: '1px' }}>
+            เข้าสู่คดี
+          </Typography>
+
           <form onSubmit={joinGame}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              
+              <Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                  <Typography variant="caption" sx={{ color: 'var(--color-ink-muted)', letterSpacing: '0.05em' }}>
+                    รหัสห้อง
+                  </Typography>
+                </Box>
                 <TextField
                   fullWidth
                   value={gameId}
                   onChange={(e) => setGameId(e.target.value)}
-                  label={t('Game code')}
+                  placeholder="e.g. abcd-efgh"
                   variant="filled"
                   required
                 />
-              </Grid>
-              <Grid item xs={12} md={6}>
+                <Typography variant="caption" sx={{ color: 'var(--color-ink-dim)', mt: 0.5, display: 'block' }}>
+                  ขอรหัสห้องจากผู้สร้างเกม
+                </Typography>
+              </Box>
+
+              <Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                  <Typography variant="caption" sx={{ color: 'var(--color-ink-muted)', letterSpacing: '0.05em' }}>
+                    ชื่อนักสืบของคุณ
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: 'var(--color-ink-dim)' }}>
+                    {nickname.length}/20
+                  </Typography>
+                </Box>
                 <TextField
                   fullWidth
                   value={nickname}
-                  onChange={(e) => setNickname(e.target.value)}
-                  label={t('Your nickname')}
+                  onChange={(e) => setNickname(e.target.value.slice(0, 20))}
+                  placeholder="ชื่อเล่นของคุณ"
                   variant="filled"
                   required
                 />
-              </Grid>
-              <Grid item xs={12} md={6} sx={{ display: { lg: 'flex' } }}>
+              </Box>
+
+              <Box sx={{ mt: 2 }}>
                 <Button
-                  component={Link}
-                  to="/"
-                  variant="contained"
-                  size="large"
-                  sx={{
-                    mr: 2,
-                    mb: { xs: 2, lg: 0 },
-                    bgcolor: '#fafafa',
-                    color: '#094067',
-                    '&:hover': { bgcolor: '#e0e0e0' },
-                  }}
-                >
-                  <ArrowBack sx={{ color: '#ef4565' }} />
-                </Button>
-                <Button
-                  disabled={disabled}
+                  disabled={disabled || !nickname.trim() || !gameId.trim()}
                   type="submit"
                   variant="contained"
-                  size="large"
                   color="error"
-                  sx={{ mb: 2 }}
+                  fullWidth
+                  size="large"
+                  sx={{ 
+                    py: 1.5,
+                    fontSize: '1.1rem',
+                    borderRadius: 'var(--radius-md)',
+                  }}
                 >
-                  {t('Enter game')}
+                  เข้าสู่เกม
                 </Button>
-              </Grid>
-            </Grid>
+              </Box>
+            </Box>
           </form>
-        </Grid>
-      </Grid>
-    </Container>
+        </Paper>
+      </Container>
+    </Box>
   );
 }

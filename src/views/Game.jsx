@@ -1,46 +1,40 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, Tabs, Tab, useMediaQuery, useTheme, Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
-import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
+import { Box, Typography } from '@mui/material';
 import { useGame } from '@/store/GameContext';
-import { useTranslate } from '@/i18n/TranslateContext';
+
 import Lobby from '@/components/Lobby';
-import Board from '@/components/Board';
-import Detective from '@/components/Detective';
 import WaitingForCrime from '@/components/WaitingForCrime';
 import ChatBox from '@/components/ChatBox';
-import PhaseTimer from '@/components/PhaseTimer';
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      style={{ height: '100%', overflow: 'auto' }}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 2, height: '100%' }}>
-          {children}
-        </Box>
-      )}
-    </div>
-  );
-}
+import GameHeader from '@/components/GameHeader';
+import GamePlayLayout from '@/components/GamePlayLayout';
+import MurdererChoice from '@/components/MurdererChoice';
+import GameSummary from '@/components/GameSummary';
+import IntroVideo from '@/components/IntroVideo';
+import murdererBg from '@/assets/murderer_choice.webp';
+import showcaseBg from '@/assets/card_showcase.webp';
 
 export default function Game() {
   const { game, player, actions } = useGame();
-  const { t } = useTranslate();
   const params = useParams();
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
-  const [tabValue, setTabValue] = useState(0);
 
   // Load game on mount
   useEffect(() => {
     actions.loadGame(params.id);
   }, [params.id]);
+
+  const [showIntroVideo, setShowIntroVideo] = useState(false);
+
+  // Check if we should play the intro video when the game starts
+  useEffect(() => {
+    if (game && game.started && !game.finished) {
+      const videoKey = `intro_played_${game.gameId}`;
+      if (!sessionStorage.getItem(videoKey)) {
+        setShowIntroVideo(true);
+        sessionStorage.setItem(videoKey, 'true');
+      }
+    }
+  }, [game?.started, game?.gameId, game?.finished]);
 
   // If host player info is in localStorage but not in context, restore it
   useEffect(() => {
@@ -59,75 +53,51 @@ export default function Game() {
     return <Lobby />;
   }
 
+  if (showIntroVideo) {
+    return <IntroVideo onComplete={() => setShowIntroVideo(false)} />;
+  }
+
   // Host is a player - check if we have their data
   const hostPlayer = player;
   const isNightPhase = !game.murdererChoice;
   const isMurderer = hostPlayer && hostPlayer.index === game.murderer;
 
-  // Desktop layout: Board + Player controls side by side
-  if (isDesktop) {
-    return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
-        <PhaseTimer phase={game.phase} phaseEndsAt={game.phaseEndsAt} isFinished={game.finished} />
-        <Box sx={{ display: 'flex', flexGrow: 1, overflow: 'hidden' }}>
-          <Box sx={{ flex: 2, borderRight: 1, borderColor: 'divider', overflow: 'auto', p: 2 }}>
-            <Board />
+  if (hostPlayer && isNightPhase) {
+    if (!isMurderer) {
+      return <WaitingForCrime game={game} player={hostPlayer} />;
+    } else {
+      return (
+        <Box sx={{ 
+          width: '100%', 
+          minHeight: '100vh', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          p: { xs: 2, md: 4 }, 
+          pt: { xs: 6, md: 10 }
+        }}>
+          <Box sx={{ maxWidth: '900px', mx: 'auto', width: '100%' }}>
+            <MurdererChoice game={game} player={hostPlayer} />
           </Box>
-        <Box sx={{ flex: 1, overflow: 'auto', p: 2, bgcolor: 'background.paper' }}>
-          {hostPlayer ? (
-            isNightPhase && !isMurderer ? (
-              <WaitingForCrime isMurderer={false} />
-            ) : (
-              <Detective game={game} player={hostPlayer} />
-            )
-          ) : (
-            <Typography sx={{ p: 2 }}>{t('Loading player data...')}</Typography>
-          )}
         </Box>
-        </Box>
-        <ChatBox />
-      </Box>
-    );
+      );
+    }
   }
 
-  // Mobile layout: Tabs
   return (
-    <Box sx={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <PhaseTimer phase={game.phase} phaseEndsAt={game.phaseEndsAt} isFinished={game.finished} />
-      <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
-        <TabPanel value={tabValue} index={0}>
-          <Board />
-        </TabPanel>
-        <TabPanel value={tabValue} index={1}>
-          {hostPlayer ? (
-            isNightPhase && !isMurderer ? (
-              <WaitingForCrime isMurderer={false} />
-            ) : (
-              <Detective game={game} player={hostPlayer} view="cards" />
-            )
-          ) : (
-            <Typography sx={{ p: 2 }}>{t('Loading player data...')}</Typography>
-          )}
-        </TabPanel>
-        <TabPanel value={tabValue} index={2}>
-          {hostPlayer ? (
-            isNightPhase && !isMurderer ? (
-              <WaitingForCrime isMurderer={false} />
-            ) : (
-              <Detective game={game} player={hostPlayer} view="actions" />
-            )
-          ) : (
-            <Typography sx={{ p: 2 }}>{t('Loading player data...')}</Typography>
-          )}
-        </TabPanel>
-      </Box>
-      <Box sx={{ borderTop: 1, borderColor: 'divider', bgcolor: 'background.paper' }}>
-        <Tabs value={tabValue} onChange={(e, v) => setTabValue(v)} variant="fullWidth">
-          <Tab label={t('Public Board')} />
-          <Tab label={t('Personal Cards')} />
-          <Tab label={t('Voting')} />
-        </Tabs>
-      </Box>
+    <Box sx={{ 
+      width: '100%', 
+      minHeight: '100vh', 
+      display: 'flex', 
+      flexDirection: 'column'
+    }}>
+      {!game.finished && <GameHeader />}
+      
+      {game.finished ? (
+        <GameSummary game={game} />
+      ) : (
+        <GamePlayLayout isHost={true} currentPlayer={hostPlayer} />
+      )}
+      
       <ChatBox />
     </Box>
   );

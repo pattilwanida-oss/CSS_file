@@ -1,45 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, LinearProgress, Box, Tabs, Tab, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useGame } from '@/store/GameContext';
-import { useTranslate } from '@/i18n/TranslateContext';
-import Detective from '@/components/Detective';
-import Board from '@/components/Board';
+
 import Lobby from '@/components/Lobby';
 import WaitingForCrime from '@/components/WaitingForCrime';
 import ChatBox from '@/components/ChatBox';
-import PhaseTimer from '@/components/PhaseTimer';
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      style={{ height: '100%', overflow: 'auto' }}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3, height: '100%' }}>
-          {children}
-        </Box>
-      )}
-    </div>
-  );
-}
+import GameHeader from '@/components/GameHeader';
+import GamePlayLayout from '@/components/GamePlayLayout';
+import MurdererChoice from '@/components/MurdererChoice';
+import GameSummary from '@/components/GameSummary';
+import IntroVideo from '@/components/IntroVideo';
 
 export default function Player() {
-
   const { game, player, actions } = useGame();
-  const { t, setLang } = useTranslate();
   const params = useParams();
   const prevGameRef = useRef(null);
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
-  const [tabValue, setTabValue] = useState(0);
 
   // Initial mount: load player and set language
   useEffect(() => {
@@ -52,12 +28,7 @@ export default function Player() {
     init();
   }, [params.id, params.slug]);
 
-  // Set language when game is loaded
-  useEffect(() => {
-    if (game?.lang) {
-      setLang(game.lang);
-    }
-  }, [game?.lang]);
+
 
   // Watch for game start: reload player when game transitions from not started to started
   useEffect(() => {
@@ -71,20 +42,18 @@ export default function Player() {
     prevGameRef.current = game;
   }, [game]);
 
-  // Force navigate to voting tab when voting phase starts
-  useEffect(() => {
-    if (game?.phase === 'voting' && !isDesktop) {
-      setTabValue(2);
-    }
-  }, [game?.phase, isDesktop]);
+  const [showIntroVideo, setShowIntroVideo] = useState(false);
 
-  const handleTabChange = (event, newValue) => {
-    if (game?.phase === 'voting' && newValue !== 2) {
-      // Prevent leaving voting tab during voting phase
-      return;
+  // Check if we should play the intro video when the game starts
+  useEffect(() => {
+    if (game && game.started && !game.finished) {
+      const videoKey = `intro_played_${game.gameId}`;
+      if (!sessionStorage.getItem(videoKey)) {
+        setShowIntroVideo(true);
+        sessionStorage.setItem(videoKey, 'true');
+      }
     }
-    setTabValue(newValue);
-  };
+  }, [game?.started, game?.gameId, game?.finished]);
 
   if (!player || !game) return null;
 
@@ -92,52 +61,42 @@ export default function Player() {
     return <Lobby isPlayerView={true} />;
   }
 
+  if (showIntroVideo) {
+    return <IntroVideo onComplete={() => setShowIntroVideo(false)} />;
+  }
+
   const isNightPhase = !game.murdererChoice;
   const isMurderer = player.index === game.murderer;
 
-  if (isNightPhase && !isMurderer) {
-    return <WaitingForCrime isMurderer={false} />;
-  }
-
-  if (isDesktop) {
-    return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
-        <PhaseTimer phase={game.phase} phaseEndsAt={game.phaseEndsAt} isFinished={game.finished} />
-        <Box sx={{ display: 'flex', flexGrow: 1, overflow: 'hidden' }}>
-          <Box sx={{ flex: 2, borderRight: 1, borderColor: 'divider', overflow: 'auto', p: 2 }}>
-            <Board />
+  if (isNightPhase) {
+    if (!isMurderer) {
+      return <WaitingForCrime game={game} player={player} isMurderer={false} />;
+    } else {
+      return (
+        <Box sx={{ width: '100%', minHeight: '100vh', display: 'flex', flexDirection: 'column', p: { xs: 2, md: 4 }, pt: { xs: 6, md: 10 } }}>
+          <Box sx={{ maxWidth: '900px', mx: 'auto', width: '100%' }}>
+            <Typography variant="h3" sx={{ mb: 4, textAlign: 'center', fontFamily: '"kingthings_trypewriter_2Rg", serif', color: 'var(--color-error-main)', textShadow: '0 0 15px rgba(239,69,101,0.5)' }}>
+              ช่วงกลางคืน: ก่อเหตุอาชญากรรม
+            </Typography>
+            <Typography variant="h6" sx={{ mb: 4, textAlign: 'center', color: 'var(--color-ink-muted)' }}>
+              เลือกอาวุธและหลักฐานของคุณเพื่อก่อเหตุ
+            </Typography>
+            <MurdererChoice game={game} player={player} />
           </Box>
-          <Box sx={{ flex: 1, overflow: 'auto', p: 2, bgcolor: 'background.paper' }}>
-            <Detective game={game} player={player} />
-          </Box>
-          <ChatBox />
         </Box>
-      </Box>
-    );
+      );
+    }
   }
 
-  // Mobile Layout
   return (
-    <Box sx={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <PhaseTimer phase={game.phase} phaseEndsAt={game.phaseEndsAt} isFinished={game.finished} />
-      <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
-        <TabPanel value={tabValue} index={0}>
-          <Board />
-        </TabPanel>
-        <TabPanel value={tabValue} index={1}>
-          <Detective game={game} player={player} view="cards" />
-        </TabPanel>
-        <TabPanel value={tabValue} index={2}>
-          <Detective game={game} player={player} view="actions" />
-        </TabPanel>
-      </Box>
-      <Box sx={{ borderTop: 1, borderColor: 'divider', bgcolor: 'background.paper' }}>
-        <Tabs value={tabValue} onChange={handleTabChange} variant="fullWidth">
-          <Tab label={t('Public Board')} />
-          <Tab label={t('Personal Cards')} />
-          <Tab label={t('Voting')} />
-        </Tabs>
-      </Box>
+    <Box sx={{ width: '100%', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      {!game.finished && <GameHeader />}
+      
+      {game.finished ? (
+        <GameSummary game={game} />
+      ) : (
+        <GamePlayLayout isHost={false} currentPlayer={player} />
+      )}
       <ChatBox />
     </Box>
   );

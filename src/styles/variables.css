@@ -4,17 +4,93 @@
     url("../assets/kingthings_trypewriter_2-webfont.woff") format("woff");
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 :root {
-  --black: #5f6c7b;
-  --darkblue: #094067;
-  --accent: #ef4565;
-  --secondary: #3da9fc;
-  --primary: #094067;
+  /* ─── Color System (OKLCH) ─── */
+  --color-bg-deep: oklch(0.1 0.02 250);
+  --color-bg: oklch(0.13 0.025 250);
+  --color-surface: oklch(0.16 0.02 250 / 0.75);
+  --color-surface-hover: oklch(0.2 0.025 250 / 0.85);
+  --color-border-subtle: oklch(0.35 0.01 250 / 0.12);
+  --color-border-accent: oklch(0.55 0.18 15 / 0.35);
+
+  --color-accent: oklch(0.6 0.22 15);          /* Crimson */
+  --color-accent-glow: oklch(0.6 0.22 15 / 0.25);
+  --color-primary: oklch(0.6 0.18 250);         /* Deep blue */
+  --color-primary-glow: oklch(0.6 0.18 250 / 0.2);
+
+  --color-ink: oklch(0.92 0.005 250);
+  --color-ink-muted: oklch(0.65 0.015 250);
+  --color-ink-dim: oklch(0.5 0.01 250);
+
+  --color-success: oklch(0.68 0.17 145);
+  --color-warning: oklch(0.72 0.15 85);
+  
+  /* Backward compatibility for old vars */
+  --black: #0f172a;
+  --darkblue: #1e293b;
+  --secondary: #0f172a;
+  --text-main: #f8fafc;
+  --text-muted-old: #cbd5e1;
+
+  /* ─── Spacing ─── */
+  --space-xs: 0.25rem;   /* 4px */
+  --space-sm: 0.5rem;    /* 8px */
+  --space-md: 1rem;      /* 16px */
+  --space-lg: 1.5rem;    /* 24px */
+  --space-xl: 2rem;      /* 32px */
+  --space-2xl: 3rem;     /* 48px */
+  --space-3xl: 4rem;     /* 64px */
+
+  /* ─── Typography ─── */
+  --text-xs: 0.6875rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.9375rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
+  --text-display: clamp(2.5rem, 5vw, 5rem);
+
+  /* ─── Motion ─── */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+
+  /* ─── Borders ─── */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* ─── Shadows ─── */
+  --shadow-card: 0 4px 24px oklch(0 0 0 / 0.35);
+  --shadow-elevated: 0 8px 40px oklch(0 0 0 / 0.45);
+  --shadow-glow-accent: 0 0 24px oklch(0.6 0.22 15 / 0.2);
+  --shadow-glow-primary: 0 0 20px oklch(0.6 0.18 250 / 0.15);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-normal: 0ms;
+    --duration-slow: 0ms;
+  }
 }
 
 body {
   margin: 0;
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans Thai", "IBM Plex Mono", monospace, sans-serif;
+  background-color: var(--color-bg-deep);
+  background-image: radial-gradient(circle at top right, oklch(0.2 0.05 250 / 0.4), transparent 50%),
+                    radial-gradient(circle at bottom left, oklch(0.15 0.1 15 / 0.15), transparent 50%);
+  background-attachment: fixed;
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

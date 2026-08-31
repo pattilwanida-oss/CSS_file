@@ -7,20 +7,22 @@ import {
   Button,
   Snackbar,
   Alert,
-  LinearProgress,
   Typography,
+  Box,
+  Chip
 } from '@mui/material';
 import { QRCodeCanvas } from 'qrcode.react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ContentCopy, ExitToApp, PlayArrow, HourglassEmpty } from '@mui/icons-material';
 import { useGame } from '@/store/GameContext';
-import { useTranslate } from '@/i18n/TranslateContext';
+
 import LobbyPlayers from './LobbyPlayers';
 import ChatBox from './ChatBox';
 
 export default function Lobby({ isPlayerView }) {
   const { game, actions } = useGame();
-  const { t, setLang } = useTranslate();
   const params = useParams();
+  const navigate = useNavigate();
 
   const [snackbar, setSnackbar] = useState({ open: false, severity: 'success', message: '' });
 
@@ -29,12 +31,6 @@ export default function Lobby({ isPlayerView }) {
       await actions.loadGame(params.id);
     })();
   }, [params.id]);
-
-  useEffect(() => {
-    if (game && game.lang) {
-      setLang(game.lang);
-    }
-  }, [game]);
 
   const location = useMemo(() => {
     const roomId = game?.gameId || params.id;
@@ -46,13 +42,6 @@ export default function Lobby({ isPlayerView }) {
     if (!game || !game.players) return false;
     return Object.keys(game.players).map((item) => game.players[item]);
   }, [game]);
-
-  const playerCount = useMemo(() => {
-    if (!game || !game.players) return t('No players joined yet.');
-    if (players.length === 1) return `${players.length} ${t('player joined.')}`;
-    return `${players.length} ${t('players joined.')}`;
-  }, [game, players, t]);
-
 
   const handleStartGame = async () => {
     await actions.startGame({
@@ -72,7 +61,7 @@ export default function Lobby({ isPlayerView }) {
         await navigator.clipboard.writeText(text);
         return true;
       } catch {
-        // Fall through to legacy copy for non-secure contexts (e.g. HTTP over LAN).
+        // Fall through
       }
     }
 
@@ -96,71 +85,155 @@ export default function Lobby({ isPlayerView }) {
     setSnackbar({
       open: true,
       severity: copied ? 'success' : 'error',
-      message: copied ? t('URL Copied') : t('Failed to copy URL'),
+      message: copied ? 'คัดลอกลิงก์สำเร็จ' : 'คัดลอกลิงก์ล้มเหลว',
     });
   };
 
   if (!game) return null;
 
   return (
-    <Container sx={{ height: '100%' }}>
-      <Grid container sx={{ height: '100%' }} alignItems="center" spacing={2} justifyContent="center">
-        <Grid item xs={12} md={isPlayerView ? 8 : 5} xl={isPlayerView ? 6 : 4} sx={{ mt: 5 }}>
-          <Typography variant="h3">
-            {t('Lobby for room')}{' '}
-            <code style={{ color: '#ff5252', textTransform: 'uppercase' }}>
-              {params.id}
-            </code>
-          </Typography>
-          <Typography variant="subtitle1" sx={{ my: 2 }}>
-            {t('Waiting for players')}. {playerCount}
-          </Typography>
-          <LinearProgress color="error" sx={{ borderRadius: 1 }} />
+    <Box sx={{ minHeight: '100vh', pt: { xs: 4, md: 8 }, pb: 4 }}>
+      <Container maxWidth="lg">
+        {/* Header Section */}
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: { xs: 'stretch', sm: 'flex-start' },
+          flexDirection: { xs: 'column', sm: 'row' },
+          gap: { xs: 2, sm: 0 },
+          mb: 4 
+        }}>
+          <Box>
+            <Typography variant="h3" sx={{ fontFamily: '"Chakra Petch", sans-serif', mb: 1 }}>
+              ห้องรอล็อบบี้
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Typography variant="subtitle1" sx={{ color: 'var(--color-ink-muted)' }}>
+                รหัสห้อง:
+              </Typography>
+              <Chip 
+                label={params.id} 
+                onClick={() => handleCopyText(params.id)}
+                icon={<ContentCopy style={{ fontSize: 16 }} />}
+                sx={{ 
+                  fontFamily: 'monospace', 
+                  fontSize: '1rem', 
+                  fontWeight: 'bold',
+                  textTransform: 'uppercase',
+                  bgcolor: 'rgba(239, 69, 101, 0.15)',
+                  color: 'var(--color-accent)',
+                  border: '1px solid rgba(239, 69, 101, 0.3)',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    bgcolor: 'rgba(239, 69, 101, 0.25)',
+                  }
+                }} 
+              />
+            </Box>
+          </Box>
+          
+          <Button 
+            variant="outlined" 
+            color="inherit" 
+            startIcon={<ExitToApp />}
+            onClick={() => navigate('/')}
+            sx={{ borderColor: 'var(--color-border-subtle)', color: 'var(--color-ink-muted)' }}
+          >
+            ออก
+          </Button>
+        </Box>
 
-          {players && (
-            <LobbyPlayers
-              game={game}
-              players={players}
-            />
-          )}
-
-          {!isPlayerView && (
-            <Button
-              variant="contained"
-              color="error"
-              size="large"
-              sx={{ mt: 2 }}
-              disabled={!players || players.length < 5}
-              onClick={handleStartGame}
-            >
-              {t('Start game')}
-            </Button>
-          )}
-        </Grid>
-
-        {!isPlayerView && (
-          <Grid item xs={12} md={3} xl={2}>
-            <Card>
+        <Grid container spacing={4}>
+          {/* Main Content - Players */}
+          <Grid item xs={12} md={isPlayerView ? 12 : 8}>
+            <Card sx={{ p: 1, bgcolor: 'var(--color-surface)' }}>
               <CardContent>
-                <QRCodeCanvas
-                  value={location}
-                  size={200}
-                  bgColor="#fff"
-                  fgColor="#091619"
-                  style={{ maxWidth: '100%' }}
-                />
-                <Button
-                  fullWidth
-                  sx={{ mt: 2, color: '#ff5252' }}
-                  onClick={() => handleCopyText(location)}
-                >
-                  {t('Copy game url')}
-                </Button>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, borderBottom: '1px solid var(--color-border-subtle)', pb: 2 }}>
+                  <Typography sx={{ fontWeight: 600, color: 'var(--color-ink-muted)', letterSpacing: '1px' }}>
+                    👥 ผู้เล่น ({players ? players.length : 0}/12)
+                  </Typography>
+                </Box>
+
+                {players ? (
+                  <LobbyPlayers game={game} players={players} />
+                ) : (
+                  <Typography sx={{ color: 'var(--color-ink-dim)', textAlign: 'center', py: 4 }}>
+                    กำลังรอผู้เล่น...
+                  </Typography>
+                )}
+
+                {!isPlayerView && (
+                  <Box sx={{ mt: 5 }}>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      fullWidth
+                      size="large"
+                      disabled={!players || players.length < 5}
+                      onClick={handleStartGame}
+                      startIcon={(!players || players.length < 5) ? <HourglassEmpty /> : <PlayArrow />}
+                      sx={{ 
+                        py: 2, 
+                        fontSize: '1.2rem',
+                        borderRadius: 'var(--radius-md)',
+                      }}
+                    >
+                      {(!players || players.length < 5) 
+                        ? 'กำลังรอผู้เล่น...' + ` (${players ? players.length : 0}/5)` 
+                        : 'เริ่มสืบสวน'}
+                    </Button>
+                    {(!players || players.length < 5) && (
+                      <Typography variant="caption" sx={{ display: 'block', textAlign: 'center', mt: 1, color: 'var(--color-ink-dim)' }}>
+                        ต้องการผู้เล่นอย่างน้อย 5 คนเพื่อเริ่มเกม แชร์รหัสห้องให้เพื่อนๆ สิ!
+                      </Typography>
+                    )}
+                  </Box>
+                )}
               </CardContent>
             </Card>
           </Grid>
-        )}
-      </Grid>
+
+          {/* Sidebar - QR Code */}
+          {!isPlayerView && (
+            <Grid item xs={12} md={4}>
+              <Card sx={{ bgcolor: 'var(--color-surface)', height: '100%' }}>
+                <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                  <Typography variant="h6" sx={{ mb: 1, fontFamily: '"Chakra Petch", sans-serif' }}>
+                    เชิญชวนผู้เล่น
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'var(--color-ink-muted)', mb: 3 }}>
+                    สแกนเพื่อเข้าร่วมการสืบสวนนี้
+                  </Typography>
+                  
+                  <Box sx={{ 
+                    p: 2, 
+                    bgcolor: 'white', 
+                    borderRadius: 'var(--radius-md)',
+                    display: 'inline-block'
+                  }}>
+                    <QRCodeCanvas
+                      value={location}
+                      size={200}
+                      bgColor="#fff"
+                      fgColor="#0a0e1a"
+                    />
+                  </Box>
+                  
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    sx={{ mt: 4, color: 'var(--color-accent)', borderColor: 'var(--color-border-accent)' }}
+                    onClick={() => handleCopyText(location)}
+                    startIcon={<ContentCopy />}
+                  >
+                    คัดลอกลิงก์เกม
+                  </Button>
+                </CardContent>
+              </Card>
+            </Grid>
+          )}
+        </Grid>
+      </Container>
 
       <Snackbar
         open={snackbar.open}
@@ -177,6 +250,6 @@ export default function Lobby({ isPlayerView }) {
         </Alert>
       </Snackbar>
       <ChatBox />
-    </Container>
+    </Box>
   );
 }
