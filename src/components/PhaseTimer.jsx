@@ -35,9 +35,9 @@ export default function PhaseTimer({ phase, phaseEndsAt, isFinished }) {
 
   if (isFinished || !phaseEndsAt || timeLeft <= 0) {
     return (
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'var(--color-ink-muted)' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 1 }, color: 'var(--color-ink-muted)' }}>
         <TimerIcon fontSize="small" />
-        <Typography variant="body2" sx={{ fontWeight: 'bold', letterSpacing: '0.05em' }}>
+        <Typography variant="body2" sx={{ fontWeight: 'bold', letterSpacing: '0.02em', fontSize: { xs: '0.75rem', sm: '0.875rem' }, whiteSpace: 'nowrap' }}>
           กำลังรอ...
         </Typography>
       </Box>
@@ -52,7 +52,7 @@ export default function PhaseTimer({ phase, phaseEndsAt, isFinished }) {
   const progress = Math.min(100, (timeLeft / 120) * 100);
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 2 } }}>
       <Box sx={{ width: { xs: 80, sm: 120 }, display: { xs: 'none', sm: 'block' } }}>
         <LinearProgress 
           variant="determinate" 
@@ -68,7 +68,7 @@ export default function PhaseTimer({ phase, phaseEndsAt, isFinished }) {
       <Box sx={{ 
         display: 'flex', 
         alignItems: 'center', 
-        gap: 1, 
+        gap: { xs: 0.4, sm: 1 }, 
         color: isUrgent ? '#ff4444' : '#ffffff',
         animation: isUrgent ? 'pulse 1s infinite alternate' : 'none',
         '@keyframes pulse': {
@@ -82,7 +82,7 @@ export default function PhaseTimer({ phase, phaseEndsAt, isFinished }) {
           sx={{ 
             fontFamily: 'monospace', 
             fontWeight: 'bold',
-            fontSize: '1.2rem',
+            fontSize: { xs: '0.95rem', sm: '1.2rem' },
             textShadow: isUrgent ? '0 0 10px rgba(255,68,68,0.5)' : 'none'
           }}
         >

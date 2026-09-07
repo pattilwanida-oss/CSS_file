@@ -4,6 +4,7 @@ import Home from './views/Home';
 import Join from './views/Join';
 import Game from './views/Game';
 import Player from './views/Player';
+import OrientationGuard from './components/OrientationGuard';
 import './App.css';
 
 function App() {
@@ -12,6 +13,8 @@ function App() {
 
   return (
     <div className={`app-root ${isHome ? 'home-bg' : ''}`}>
+      {!isHome && <div className="app-bg-layer" />}
+      <OrientationGuard />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/join" element={<Join />} />

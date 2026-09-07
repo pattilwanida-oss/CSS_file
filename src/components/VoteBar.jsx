@@ -34,7 +34,7 @@ export default function VoteBar({ guess, onVoteClick, currentPlayer }) {
       bottom: 0,
       display: 'flex',
       justifyContent: 'center',
-      p: 2,
+      p: { xs: 1.2, sm: 2 },
       background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 70%, transparent 100%)',
       zIndex: 50,
     }}>
@@ -44,10 +44,14 @@ export default function VoteBar({ guess, onVoteClick, currentPlayer }) {
         onClick={onVoteClick}
         disabled={disableActions || !isReadyToVote}
         sx={{
-          minWidth: { xs: '200px', sm: '240px' },
-          maxWidth: { xs: '90vw', sm: 'none' },
-          fontSize: { xs: '0.9rem', sm: '1.2rem' },
-          letterSpacing: '0.1em',
+          minWidth: { xs: '180px', sm: '240px' },
+          maxWidth: { xs: '88vw', sm: 'none' },
+          fontSize: { xs: '0.8rem', sm: '1.05rem', md: '1.2rem' },
+          letterSpacing: { xs: '0.02em', sm: '0.08em' },
+          px: { xs: 2, sm: 4 },
+          py: { xs: 1, sm: 1.5 },
+          whiteSpace: 'normal',
+          lineHeight: 1.25,
           border: '2px solid',
           borderColor: isButtonActive ? 'var(--color-accent)' : 'rgba(255,255,255,0.4)',
           color: isButtonActive ? 'var(--color-accent)' : 'white',

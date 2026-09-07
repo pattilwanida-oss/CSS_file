@@ -16,7 +16,7 @@ export default function GameCard({ name, image: imageProp, type, selected, disab
       aria-label={name}
       sx={{
         width: '100%',
-        minWidth: '80px',
+        minWidth: { xs: '60px', sm: '80px' },
         maxWidth: { xs: '100%', sm: '140px' },
         cursor: disabled ? 'default' : (onClick ? 'pointer' : 'default'),
         borderRadius: 'var(--radius-md)',
@@ -122,27 +122,31 @@ export default function GameCard({ name, image: imageProp, type, selected, disab
 
       {/* Card Name */}
       <Box sx={{
-        p: { xs: 0.5, sm: 1 },
+        p: { xs: '3px 2px', sm: 0.8, md: 1 },
         textAlign: 'center',
         borderTop: `1px solid ${
           isMeans
             ? 'oklch(0.6 0.18 250 / 0.2)'
             : 'oklch(0.6 0.22 15 / 0.2)'
         }`,
-        bgcolor: 'rgba(0,0,0,0.3)',
+        bgcolor: 'rgba(0,0,0,0.35)',
+        overflow: 'hidden',
+        width: '100%',
       }}>
         <Typography sx={{
-          fontSize: { xs: '0.7rem', sm: 'var(--text-xs)' },
+          fontSize: { xs: '0.62rem', sm: '0.72rem', md: 'var(--text-xs)' },
           fontWeight: 700,
-          letterSpacing: '0.02em',
+          letterSpacing: '0.01em',
           color: 'white',
-          lineHeight: 1.2,
+          lineHeight: 1.15,
           textShadow: '0 1px 2px rgba(0,0,0,0.8)',
           wordBreak: 'break-word',
+          overflowWrap: 'anywhere',
           display: '-webkit-box',
           WebkitLineClamp: 2,
           WebkitBoxOrient: 'vertical',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          hyphens: 'auto'
         }}>
           {name}
         </Typography>

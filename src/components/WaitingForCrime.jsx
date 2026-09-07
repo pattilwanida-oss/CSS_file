@@ -19,8 +19,9 @@ export default function WaitingForCrime({ game, player }) {
         position: 'relative',
         width: '100%', 
         p: { xs: 2, md: 4 },
-        bgcolor: '#000',
-        minHeight: '100%',
+        bgcolor: 'transparent',
+        height: '100%',
+        overflowY: 'auto',
       }}>
         <Tooltip title={'ออกจากเกม'}>
           <IconButton 
@@ -30,7 +31,7 @@ export default function WaitingForCrime({ game, player }) {
             <ExitToApp />
           </IconButton>
         </Tooltip>
-        <Grid container spacing={4} sx={{ maxWidth: '1200px', mx: 'auto' }}>
+        <Grid container spacing={{ xs: 2, md: 4 }} sx={{ maxWidth: '1200px', mx: 'auto' }}>
           
           {/* Left Column - Role */}
           <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -40,8 +41,10 @@ export default function WaitingForCrime({ game, player }) {
                 color: '#fff', 
                 fontWeight: 'bold', 
                 fontFamily: '"kingthings_trypewriter_2Rg", serif',
-                letterSpacing: '0.1em',
-                mb: 4
+                letterSpacing: '0.05em',
+                fontSize: { xs: '1.5rem', sm: '2rem', md: '2.125rem' },
+                mb: { xs: 2, md: 4 },
+                textAlign: 'center'
               }}
             >
               บทบาทของฉัน
@@ -50,7 +53,7 @@ export default function WaitingForCrime({ game, player }) {
             {/* Avatar Card */}
             <Box sx={{
               width: '100%',
-              maxWidth: '300px',
+              maxWidth: { xs: '200px', sm: '260px', md: '300px' },
               aspectRatio: '3/4',
               bgcolor: '#111',
               backgroundImage: `url(${detectiveAvatar})`,
@@ -70,9 +73,9 @@ export default function WaitingForCrime({ game, player }) {
             </Box>
             
             {/* Waiting status text */}
-            <Box sx={{ mt: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ mt: { xs: 2, md: 4 }, display: 'flex', alignItems: 'center', gap: 2 }}>
               <CircularProgress size={20} sx={{ color: '#64ffda' }} />
-              <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.7)', fontStyle: 'italic' }}>
+              <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.7)', fontStyle: 'italic', fontSize: { xs: '0.9rem', sm: '1rem' } }}>
                 กำลังรอฆาตกร...
               </Typography>
             </Box>

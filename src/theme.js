@@ -7,7 +7,7 @@ const theme = createTheme({
     secondary: { main: '#0f172a' }, // Deep Navy (Surface)
     error: { main: '#ef4565', light: '#f87171', dark: '#dc2626' }, // Crimson (Murderer / Evidence)
     background: {
-      default: 'transparent',
+      default: '#070a13',
       paper: 'rgba(10, 15, 30, 0.75)', // Darker glassmorphism
     },
     text: {

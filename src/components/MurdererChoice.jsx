@@ -65,11 +65,10 @@ export default function MurdererChoice({ game, player, onChoice }) {
       <Box sx={{ 
         position: 'relative',
         width: '100%', 
-        p: { xs: 2, md: 4 },
-        bgcolor: 'rgba(0, 0, 0, 0.7)',
-        backdropFilter: 'blur(10px)',
-        borderRadius: 4,
-        minHeight: '100%',
+        p: { xs: 2, md: 3 },
+        bgcolor: 'transparent',
+        height: '100%',
+        overflowY: 'auto',
       }}>
         <Tooltip title={'ออกจากเกม'}>
           <IconButton 
@@ -79,7 +78,7 @@ export default function MurdererChoice({ game, player, onChoice }) {
             <ExitToApp />
           </IconButton>
         </Tooltip>
-        <Grid container spacing={4} sx={{ maxWidth: '1200px', mx: 'auto' }}>
+        <Grid container spacing={{ xs: 2, md: 4 }} sx={{ maxWidth: '1200px', mx: 'auto' }}>
           
           {/* Left Column - Role */}
           <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -89,8 +88,10 @@ export default function MurdererChoice({ game, player, onChoice }) {
                 color: '#fff', 
                 fontWeight: 'bold', 
                 fontFamily: '"kingthings_trypewriter_2Rg", serif',
-                letterSpacing: '0.1em',
-                mb: 4
+                letterSpacing: '0.05em',
+                fontSize: { xs: '1.5rem', sm: '2rem', md: '2.125rem' },
+                mb: { xs: 2, md: 4 },
+                textAlign: 'center'
               }}
             >
               บทบาทของฉัน
@@ -99,7 +100,7 @@ export default function MurdererChoice({ game, player, onChoice }) {
             {/* Avatar Card */}
             <Box sx={{
               width: '100%',
-              maxWidth: '300px',
+              maxWidth: { xs: '200px', sm: '260px', md: '300px' },
               aspectRatio: '3/4',
               bgcolor: '#111',
               backgroundImage: `url(${murdererAvatar})`,
@@ -123,19 +124,20 @@ export default function MurdererChoice({ game, player, onChoice }) {
           <Grid item xs={12} md={8}>
             
             {/* Evidence Row (Clues) */}
-            <Box sx={{ mb: 4 }}>
+            <Box sx={{ mb: { xs: 2.5, md: 4 } }}>
               <Typography 
                 variant="h6" 
                 sx={{ 
                   color: '#fff', 
                   fontFamily: '"kingthings_trypewriter_2Rg", serif',
-                  letterSpacing: '0.1em',
-                  mb: 2 
+                  letterSpacing: '0.05em',
+                  fontSize: { xs: '1rem', sm: '1.25rem' },
+                  mb: 1 
                 }}
               >
                 หลักฐาน
               </Typography>
-              <Typography variant="body1" sx={{ color: 'var(--color-ink-muted)', mb: 3 }}>
+              <Typography variant="body1" sx={{ color: 'var(--color-ink-muted)', mb: { xs: 1.5, sm: 3 }, fontSize: { xs: '0.85rem', sm: '1rem' } }}>
                 เลือก 1 หลักฐานและ 1 อาวุธเพื่อก่ออาชญากรรม
               </Typography>
               <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(4, 1fr)' }, gap: 2 }}>
@@ -183,16 +185,16 @@ export default function MurdererChoice({ game, player, onChoice }) {
 
             {/* Confirm Button */}
             {!hasSubmitted && (
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: { xs: 3, sm: 5 } }}>
                 <Button
                   variant="outlined"
                   disabled={!isComplete || isSubmitting}
                   onClick={handleSendChoice}
                   sx={{
-                    px: 8,
-                    py: 1.5,
-                    fontSize: '1.2rem',
-                    letterSpacing: '0.1em',
+                    px: { xs: 3, sm: 6 },
+                    py: { xs: 1.2, sm: 1.5 },
+                    fontSize: { xs: '0.95rem', sm: '1.2rem' },
+                    letterSpacing: { xs: '0.05em', sm: '0.1em' },
                     color: '#fff',
                     borderColor: 'rgba(255,255,255,0.3)',
                     borderRadius: '4px',

@@ -11,11 +11,13 @@ import GamePlayLayout from '@/components/GamePlayLayout';
 import MurdererChoice from '@/components/MurdererChoice';
 import GameSummary from '@/components/GameSummary';
 import IntroVideo from '@/components/IntroVideo';
+import CluesModal from '@/components/CluesModal';
 
 export default function Player() {
   const { game, player, actions } = useGame();
   const params = useParams();
   const prevGameRef = useRef(null);
+  const [cluesOpen, setCluesOpen] = useState(false);
 
   // Initial mount: load player and set language
   useEffect(() => {
@@ -73,12 +75,12 @@ export default function Player() {
       return <WaitingForCrime game={game} player={player} isMurderer={false} />;
     } else {
       return (
-        <Box sx={{ width: '100%', minHeight: '100vh', display: 'flex', flexDirection: 'column', p: { xs: 2, md: 4 }, pt: { xs: 6, md: 10 } }}>
-          <Box sx={{ maxWidth: '900px', mx: 'auto', width: '100%' }}>
-            <Typography variant="h3" sx={{ mb: 4, textAlign: 'center', fontFamily: '"kingthings_trypewriter_2Rg", serif', color: 'var(--color-error-main)', textShadow: '0 0 15px rgba(239,69,101,0.5)' }}>
+        <Box sx={{ width: '100%', height: '100dvh', overflow: 'hidden', display: 'flex', flexDirection: 'column', p: { xs: 1, md: 3 }, pt: { xs: 2, md: 4 } }}>
+          <Box sx={{ maxWidth: '900px', mx: 'auto', width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <Typography variant="h4" sx={{ mb: 1.5, textAlign: 'center', fontFamily: '"kingthings_trypewriter_2Rg", serif', color: 'var(--color-error-main)', textShadow: '0 0 15px rgba(239,69,101,0.5)' }}>
               ช่วงกลางคืน: ก่อเหตุอาชญากรรม
             </Typography>
-            <Typography variant="h6" sx={{ mb: 4, textAlign: 'center', color: 'var(--color-ink-muted)' }}>
+            <Typography variant="body1" sx={{ mb: 1.5, textAlign: 'center', color: 'var(--color-ink-muted)' }}>
               เลือกอาวุธและหลักฐานของคุณเพื่อก่อเหตุ
             </Typography>
             <MurdererChoice game={game} player={player} />
@@ -89,15 +91,16 @@ export default function Player() {
   }
 
   return (
-    <Box sx={{ width: '100%', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {!game.finished && <GameHeader />}
+    <Box sx={{ width: '100%', height: '100dvh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+      {!game.finished && <GameHeader onOpenClues={() => setCluesOpen(true)} />}
       
       {game.finished ? (
         <GameSummary game={game} />
       ) : (
-        <GamePlayLayout isHost={false} currentPlayer={player} />
+        <GamePlayLayout isHost={false} currentPlayer={player} onOpenClues={() => setCluesOpen(true)} />
       )}
       <ChatBox />
+      <CluesModal open={cluesOpen} onClose={() => setCluesOpen(false)} onOpen={() => setCluesOpen(true)} />
     </Box>
   );
 }

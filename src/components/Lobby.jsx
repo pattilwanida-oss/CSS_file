@@ -92,7 +92,7 @@ export default function Lobby({ isPlayerView }) {
   if (!game) return null;
 
   return (
-    <Box sx={{ minHeight: '100vh', pt: { xs: 4, md: 8 }, pb: 4 }}>
+    <Box sx={{ height: '100dvh', overflowY: 'auto', pt: { xs: 3, md: 6 }, pb: 4 }}>
       <Container maxWidth="lg">
         {/* Header Section */}
         <Box sx={{ 
@@ -143,7 +143,7 @@ export default function Lobby({ isPlayerView }) {
           </Button>
         </Box>
 
-        <Grid container spacing={4}>
+        <Grid container spacing={{ xs: 2, md: 4 }}>
           {/* Main Content - Players */}
           <Grid item xs={12} md={isPlayerView ? 12 : 8}>
             <Card sx={{ p: 1, bgcolor: 'var(--color-surface)' }}>
@@ -183,7 +183,7 @@ export default function Lobby({ isPlayerView }) {
                         : 'เริ่มสืบสวน'}
                     </Button>
                     {(!players || players.length < 5) && (
-                      <Typography variant="caption" sx={{ display: 'block', textAlign: 'center', mt: 1, color: 'var(--color-ink-dim)' }}>
+                      <Typography variant="caption" sx={{ display: 'block', textAlign: 'center', mt: 1, color: 'var(--color-ink-dim)', wordBreak: 'break-word', overflowWrap: 'anywhere', px: 1 }}>
                         ต้องการผู้เล่นอย่างน้อย 5 คนเพื่อเริ่มเกม แชร์รหัสห้องให้เพื่อนๆ สิ!
                       </Typography>
                     )}

@@ -31,7 +31,7 @@ export default function ForensicSidebar() {
               <Typography variant="subtitle2" className="accent-text" sx={{ mb: 0.5, textTransform: 'uppercase' }}>
                 {title}
               </Typography>
-              <Typography variant="body2" sx={{ color: 'var(--color-ink-muted)' }}>
+              <Typography variant="body2" sx={{ color: 'var(--color-ink-muted)', wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
                 คำใบ้: {text}
               </Typography>
             </Box>

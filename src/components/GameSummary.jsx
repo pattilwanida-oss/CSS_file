@@ -46,10 +46,11 @@ export default function GameSummary({ game }) {
           <Typography 
             variant="h2" 
             sx={{ 
+              fontSize: { xs: '2rem', sm: '2.75rem', md: '3.75rem' },
               fontWeight: 900, 
               mb: 1,
               fontFamily: '"kingthings_trypewriter_2Rg", serif',
-              letterSpacing: '0.1em',
+              letterSpacing: '0.05em',
               color: isDetectivesWin ? '#64ffda' : '#ff4444',
               textShadow: isDetectivesWin ? '0 0 20px rgba(100,255,218,0.5)' : '0 0 20px rgba(255,68,68,0.5)'
             }}
@@ -57,7 +58,7 @@ export default function GameSummary({ game }) {
             {isDetectivesWin ? 'นักสืบชนะ' : 'ฆาตกรชนะ'}
           </Typography>
           
-          <Typography variant="h6" sx={{ color: 'var(--color-ink-muted)', mb: 6, fontStyle: 'italic' }}>
+          <Typography variant="h6" sx={{ color: 'var(--color-ink-muted)', mb: { xs: 3, md: 6 }, fontStyle: 'italic', fontSize: { xs: '0.95rem', sm: '1.25rem' }, px: 1, wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
             {isDetectivesWin 
               ? 'ไขคดีสำเร็จ ฆาตกรถูกจับได้แล้ว!'
               : 'ความจริงถูกฝังเอาไว้ ฆาตกรหลบหนีไปได้...'}
@@ -65,38 +66,38 @@ export default function GameSummary({ game }) {
 
           {/* Reveal Section */}
           <Paper elevation={24} sx={{
-            p: { xs: 3, md: 5 },
+            p: { xs: 2, sm: 3, md: 5 },
             background: 'rgba(0,0,0,0.4)',
             backdropFilter: 'blur(20px)',
             border: `1px solid ${isDetectivesWin ? 'rgba(100,255,218,0.2)' : 'rgba(255,68,68,0.2)'}`,
             borderRadius: 4,
-            mb: 4
+            mb: { xs: 3, md: 4 }
           }}>
-            <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 4 }}>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', mb: { xs: 2, md: 4 }, fontSize: { xs: '1.2rem', sm: '1.5rem' } }}>
               ความจริงเปิดเผย
             </Typography>
 
-            <Grid container spacing={4} justifyContent="center" alignItems="center">
+            <Grid container spacing={{ xs: 2, md: 4 }} justifyContent="center" alignItems="center">
               
               {/* Murderer Profile */}
               <Grid item xs={12} md={4}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <Box sx={{
-                    width: 100,
-                    height: 100,
+                    width: { xs: 80, sm: 100 },
+                    height: { xs: 80, sm: 100 },
                     borderRadius: '50%',
                     bgcolor: 'rgba(255,255,255,0.05)',
                     border: '2px solid #ff4444',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '3rem',
-                    mb: 2,
+                    fontSize: { xs: '2.2rem', sm: '3rem' },
+                    mb: 1.5,
                     boxShadow: '0 0 20px rgba(255,68,68,0.3)'
                   }}>
                     🎭
                   </Box>
-                  <Typography variant="h6" sx={{ color: '#ff4444', fontWeight: 'bold' }}>
+                  <Typography variant="h6" sx={{ color: '#ff4444', fontWeight: 'bold', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {murdererPlayer?.name}
                   </Typography>
                   <Typography variant="body2" sx={{ color: 'var(--color-ink-muted)' }}>
@@ -110,7 +111,7 @@ export default function GameSummary({ game }) {
                 <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
                   <Box sx={{ textAlign: 'center' }}>
                     <Typography variant="body2" sx={{ mb: 1, color: 'var(--color-ink-muted)' }}>อาวุธ</Typography>
-                    <Box sx={{ width: '120px', mx: 'auto' }}>
+                    <Box sx={{ width: { xs: '100px', sm: '120px' }, mx: 'auto' }}>
                       <GameCard 
                         name={game.murdererChoice?.mean} 
                         type="means" 
@@ -122,7 +123,7 @@ export default function GameSummary({ game }) {
                   
                   <Box sx={{ textAlign: 'center' }}>
                     <Typography variant="body2" sx={{ mb: 1, color: 'var(--color-ink-muted)' }}>หลักฐาน</Typography>
-                    <Box sx={{ width: '120px', mx: 'auto' }}>
+                    <Box sx={{ width: { xs: '100px', sm: '120px' }, mx: 'auto' }}>
                       <GameCard 
                         name={game.murdererChoice?.key} 
                         type="clues" 

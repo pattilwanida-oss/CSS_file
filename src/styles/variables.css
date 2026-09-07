@@ -86,10 +86,7 @@
 body {
   margin: 0;
   font-family: "IBM Plex Sans Thai", "IBM Plex Mono", monospace, sans-serif;
-  background-color: var(--color-bg-deep);
-  background-image: radial-gradient(circle at top right, oklch(0.2 0.05 250 / 0.4), transparent 50%),
-                    radial-gradient(circle at bottom left, oklch(0.15 0.1 15 / 0.15), transparent 50%);
-  background-attachment: fixed;
+  background-color: #070a13;
   color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
