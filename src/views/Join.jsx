@@ -45,11 +45,12 @@ export default function Join() {
 
   return (
     <Box sx={{ 
-      minHeight: '100vh', 
+      height: '100dvh', 
+      overflow: 'hidden',
       display: 'flex', 
       alignItems: 'center', 
       justifyContent: 'center',
-      p: 3
+      p: { xs: 2, sm: 3 }
     }}>
       <Container maxWidth="sm">
         {error && errorText && (

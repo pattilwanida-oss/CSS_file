@@ -11,12 +11,14 @@ import GamePlayLayout from '@/components/GamePlayLayout';
 import MurdererChoice from '@/components/MurdererChoice';
 import GameSummary from '@/components/GameSummary';
 import IntroVideo from '@/components/IntroVideo';
+import CluesModal from '@/components/CluesModal';
 import murdererBg from '@/assets/murderer_choice.webp';
 import showcaseBg from '@/assets/card_showcase.webp';
 
 export default function Game() {
   const { game, player, actions } = useGame();
   const params = useParams();
+  const [cluesOpen, setCluesOpen] = useState(false);
 
   // Load game on mount
   useEffect(() => {
@@ -69,13 +71,14 @@ export default function Game() {
       return (
         <Box sx={{ 
           width: '100%', 
-          minHeight: '100vh', 
+          height: '100dvh', 
+          overflow: 'hidden',
           display: 'flex', 
           flexDirection: 'column', 
-          p: { xs: 2, md: 4 }, 
-          pt: { xs: 6, md: 10 }
+          p: { xs: 1, md: 3 }, 
+          pt: { xs: 2, md: 4 }
         }}>
-          <Box sx={{ maxWidth: '900px', mx: 'auto', width: '100%' }}>
+          <Box sx={{ maxWidth: '900px', mx: 'auto', width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
             <MurdererChoice game={game} player={hostPlayer} />
           </Box>
         </Box>
@@ -86,19 +89,21 @@ export default function Game() {
   return (
     <Box sx={{ 
       width: '100%', 
-      minHeight: '100vh', 
+      height: '100dvh', 
+      overflow: 'hidden',
       display: 'flex', 
       flexDirection: 'column'
     }}>
-      {!game.finished && <GameHeader />}
+      {!game.finished && <GameHeader onOpenClues={() => setCluesOpen(true)} />}
       
       {game.finished ? (
         <GameSummary game={game} />
       ) : (
-        <GamePlayLayout isHost={true} currentPlayer={hostPlayer} />
+        <GamePlayLayout isHost={true} currentPlayer={hostPlayer} onOpenClues={() => setCluesOpen(true)} />
       )}
       
       <ChatBox />
+      <CluesModal open={cluesOpen} onClose={() => setCluesOpen(false)} onOpen={() => setCluesOpen(true)} />
     </Box>
   );
 }

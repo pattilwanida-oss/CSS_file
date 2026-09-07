@@ -44,8 +44,14 @@ export default function LobbyPlayers({ players, game }) {
               <PersonOutline />
             </Box>
             
-            <Box sx={{ flexGrow: 1 }}>
-              <Typography sx={{ fontWeight: 600, fontSize: '0.95rem' }}>
+            <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+              <Typography sx={{ 
+                fontWeight: 600, 
+                fontSize: '0.95rem',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}>
                 {player.name}
               </Typography>
             </Box>
@@ -55,6 +61,7 @@ export default function LobbyPlayers({ players, game }) {
               size="small"
               icon={isHost ? undefined : <CheckCircle style={{ fontSize: 14 }} />}
               sx={{
+                flexShrink: 0,
                 height: 22,
                 fontSize: '0.7rem',
                 fontWeight: 700,

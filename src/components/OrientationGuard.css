@@ -1,0 +1,89 @@
+/* OrientationGuard.css */
+
+.orientation-guard {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background-color: #070a13;
+  background-image: radial-gradient(circle at center, rgba(59, 130, 246, 0.08) 0%, #070a13 70%);
+  color: #ffffff;
+  padding: 24px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  user-select: none;
+  touch-action: none;
+  overscroll-behavior: none;
+}
+
+/* Trigger ONLY on mobile/small-height devices rotated to landscape */
+@media screen and (orientation: landscape) and (max-height: 550px) {
+  .orientation-guard {
+    display: flex !important;
+  }
+}
+
+.orientation-guard-card {
+  max-width: 420px;
+  width: 100%;
+  padding: 24px 28px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(16px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.orientation-guard-icon-wrapper {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  box-shadow: 0 0 24px rgba(59, 130, 246, 0.25);
+}
+
+.orientation-guard-icon {
+  font-size: 40px !important;
+  color: #60a5fa !important;
+  animation: phoneRotateLoop 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.orientation-guard-title {
+  font-family: 'Chakra Petch', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 1.25rem !important;
+  color: #f8fafc !important;
+  margin-bottom: 8px !important;
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.orientation-guard-desc {
+  font-family: 'IBM Plex Sans Thai', sans-serif !important;
+  color: #94a3b8 !important;
+  font-size: 0.9rem !important;
+  line-height: 1.5 !important;
+  margin: 0 !important;
+}
+
+@keyframes phoneRotateLoop {
+  0%, 15% {
+    transform: rotate(0deg);
+  }
+  40%, 65% {
+    transform: rotate(-90deg);
+  }
+  90%, 100% {
+    transform: rotate(0deg);
+  }
+}

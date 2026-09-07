@@ -25,34 +25,47 @@ export default function PlayerPanel({ player, guess, onCardClick, currentPlayer 
 
   return (
     <Box className={`player-panel ${isMyCard ? 'my-card-panel' : ''}`} sx={{
-      p: 2,
+      p: { xs: 1.2, sm: 2 },
       borderRadius: 'var(--radius-lg)',
       bgcolor: isMyCard ? 'rgba(59, 130, 246, 0.08)' : 'rgba(255, 255, 255, 0.03)',
       border: isMyCard ? '1px solid var(--color-primary)' : '1px solid var(--color-border-subtle)',
       boxShadow: isMyCard ? '0 0 15px rgba(59, 130, 246, 0.15)' : 'none',
       display: 'flex',
       flexDirection: 'column',
-      gap: 2,
-      minWidth: { xs: '100%', md: '360px', lg: '420px' }
+      gap: { xs: 1.2, sm: 2 },
+      minWidth: { xs: '100%', md: '360px', lg: '420px' },
+      overflow: 'hidden'
     }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: isMyCard ? '1px solid rgba(59, 130, 246, 0.3)' : '1px solid var(--color-border-subtle)', pb: 1 }}>
-        <Box>
-          <Typography variant="h6" sx={{ fontFamily: '"kingthings_trypewriter_2Rg", serif', color: ((isMyCard && game.murderer === player.index) || (game.finished && game.murderer === player.index)) ? '#ef4565' : '#ffffff', fontWeight: isMyCard ? 'bold' : 'normal', display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: isMyCard ? '1px solid rgba(59, 130, 246, 0.3)' : '1px solid var(--color-border-subtle)', pb: 1, minWidth: 0 }}>
+        <Box sx={{ minWidth: 0, flex: 1, mr: 1 }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontFamily: '"kingthings_trypewriter_2Rg", serif',
+              color: ((isMyCard && game.murderer === player.index) || (game.finished && game.murderer === player.index)) ? '#ef4565' : '#ffffff',
+              fontWeight: isMyCard ? 'bold' : 'normal',
+              fontSize: { xs: '0.95rem', sm: '1.25rem' },
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              display: 'block'
+            }}
+          >
             {isMyCard ? `🃏 การ์ดของฉัน - ${player.name}` : player.name}
           </Typography>
           {isMyCard && (
-            <Typography variant="caption" sx={{ color: game.murderer === player.index ? '#ef4565' : 'var(--color-primary)', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            <Typography variant="caption" sx={{ color: game.murderer === player.index ? '#ef4565' : 'var(--color-primary)', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>
               บทบาท: {game.murderer === player.index ? 'ฆาตกร' : 'นักสืบ'}
             </Typography>
           )}
         </Box>
         {game.finished && game.murderer === player.index && !isMyCard && (
-          <Typography variant="subtitle2" sx={{ color: '#ef4565', textShadow: '0 0 10px rgba(239, 69, 101, 0.8)' }}>Murderer</Typography>
+          <Typography variant="subtitle2" sx={{ color: '#ef4565', textShadow: '0 0 10px rgba(239, 69, 101, 0.8)', flexShrink: 0 }}>Murderer</Typography>
         )}
       </Box>
 
       <Box>
-        <Typography variant="subtitle2" sx={{ mb: 1, letterSpacing: '1px', color: '#ffffff' }}>
+        <Typography variant="subtitle2" sx={{ mb: { xs: 0.5, sm: 1 }, letterSpacing: '0.05em', color: '#ffffff', fontSize: { xs: '0.82rem', sm: '0.875rem' } }}>
           🔍 หลักฐาน
         </Typography>
         <Box className="player-panel__cards">
@@ -70,7 +83,7 @@ export default function PlayerPanel({ player, guess, onCardClick, currentPlayer 
       </Box>
 
       <Box>
-        <Typography variant="subtitle2" sx={{ mb: 1, letterSpacing: '1px', color: '#ffffff' }}>
+        <Typography variant="subtitle2" sx={{ mb: { xs: 0.5, sm: 1 }, letterSpacing: '0.05em', color: '#ffffff', fontSize: { xs: '0.82rem', sm: '0.875rem' } }}>
           🗡️ อาวุธ
         </Typography>
         <Box className="player-panel__cards">

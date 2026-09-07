@@ -21,13 +21,14 @@ import {
 import { TypeAnimation } from "react-type-animation";
 import { useGame } from "@/store/GameContext";
 
-import { Search, Gavel, Group, Extension, InfoOutlined } from "@mui/icons-material";
+import { Search, Gavel, Group, Extension, InfoOutlined, Close as CloseIcon } from "@mui/icons-material";
 
 export default function Home() {
   const { actions } = useGame();
   const navigate = useNavigate();
   const lang = "th";
   const [showDialog, setShowDialog] = useState(false);
+  const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [hostName, setHostName] = useState("");
   const [scrolled, setScrolled] = useState(false);
   const [showUI, setShowUI] = useState(false);
@@ -80,12 +81,12 @@ export default function Home() {
   ];
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ height: '100dvh', overflow: 'hidden', display: 'flex', flexDirection: 'column', position: 'relative' }}>
       {/* Video Background - seamless loop */}
       <VideoBG onIntroComplete={() => setShowUI(true)} />
 
       <Fade in={showUI} timeout={800}>
-        <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', width: '100%', zIndex: 1, position: 'relative' }}>
+        <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', width: '100%', height: '100%', zIndex: 1, position: 'relative', overflow: 'hidden' }}>
           {/* Sticky Navbar */}
           <AppBar 
         position="fixed" 
@@ -121,13 +122,13 @@ export default function Home() {
                   display: { xs: 'none', sm: 'inline-flex' },
                   '&:hover': { color: 'white' } 
                 }}
-                onClick={() => document.getElementById('how-to-play').scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => setShowHowToPlay(true)}
               >
                 วิธีเล่น
               </Button>
               <IconButton 
                 sx={{ display: { xs: 'inline-flex', sm: 'none' }, color: 'var(--color-ink-muted)' }}
-                onClick={() => document.getElementById('how-to-play').scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => setShowHowToPlay(true)}
               >
                 <InfoOutlined />
               </IconButton>
@@ -137,7 +138,7 @@ export default function Home() {
       </AppBar>
 
       {/* Hero Section */}
-      <Container maxWidth="lg" sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', pt: { xs: 12, md: 15 }, pb: { xs: 6, md: 10 }, position: 'relative', zIndex: 2 }}>
+      <Container maxWidth="lg" sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', pt: { xs: 8, md: 10 }, pb: { xs: 2, md: 4 }, position: 'relative', zIndex: 2, height: 'calc(100dvh - 70px)', overflow: 'hidden' }}>
         <Box sx={{ 
           textAlign: 'left',
           maxWidth: { xs: '100%', md: '650px' },
@@ -162,7 +163,7 @@ export default function Home() {
             variant="h1" 
             sx={{ 
               fontFamily: '"kingthings_trypewriter_2Rg", serif',
-              fontSize: 'var(--text-display)',
+              fontSize: { xs: '3rem', sm: 'var(--text-display)' },
               color: 'var(--color-ink)',
               letterSpacing: '-0.02em',
               textShadow: '0 4px 24px var(--color-primary-glow)',
@@ -257,38 +258,66 @@ export default function Home() {
                 </Typography>
               ))}
             </Box>
+            {/* Copyright */}
+            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.35)', mt: 4, display: 'block', fontSize: '0.75rem' }}>
+              © {new Date().getFullYear()} CSS FILES. A Multiplayer Mystery Game.
+            </Typography>
         </Box>
       </Container>
+      </Box>
+      </Fade>
 
-      {/* How to Play Section */}
-      <Box id="how-to-play" sx={{ bgcolor: 'rgba(0,0,0,0.3)', borderTop: '1px solid var(--color-border-subtle)', py: 10 }}>
-        <Container maxWidth="lg">
-          <Typography variant="h3" align="center" sx={{ mb: 6, color: 'white' }}>
-            วิธีเล่น
-          </Typography>
-          <Grid container spacing={4} sx={{ mb: 8 }}>
+      {/* How to Play Dialog */}
+      <Dialog
+        open={showHowToPlay}
+        onClose={() => setShowHowToPlay(false)}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            background: 'rgba(10, 15, 30, 0.95)',
+            backdropFilter: 'blur(24px)',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            borderRadius: '16px',
+            boxShadow: '0 24px 60px rgba(0,0,0,0.8)',
+            maxHeight: '85dvh',
+          },
+        }}
+      >
+        <DialogTitle sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          fontFamily: '"Chakra Petch", sans-serif', 
+          fontSize: '1.5rem', 
+          color: '#fff',
+          borderBottom: '1px solid rgba(255,255,255,0.1)',
+          pb: 1.5
+        }}>
+          📖 วิธีเล่น CSS FILES
+          <IconButton onClick={() => setShowHowToPlay(false)} sx={{ color: 'var(--color-ink-muted)' }}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+
+        <DialogContent sx={{ p: { xs: 2, md: 3 }, mt: 1 }}>
+          <Grid container spacing={2} sx={{ mb: 4 }}>
             {features.map((feature, idx) => (
               <Grid item xs={12} sm={6} md={3} key={idx}>
                 <Box sx={{ 
-                  p: 4, 
+                  p: 2.5, 
                   height: '100%',
-                  bgcolor: 'var(--color-surface)',
-                  borderRadius: 'var(--radius-lg)',
-                  border: '1px solid var(--color-border-subtle)',
-                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                  '&:hover': {
-                    transform: 'translateY(-8px)',
-                    boxShadow: 'var(--shadow-elevated)',
-                    borderColor: 'var(--color-primary-glow)'
-                  }
+                  bgcolor: 'rgba(255, 255, 255, 0.04)',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
                 }}>
-                  <Box sx={{ color: 'var(--color-primary)', mb: 2 }}>
+                  <Box sx={{ color: 'var(--color-primary)', mb: 1 }}>
                     {feature.icon}
                   </Box>
-                  <Typography variant="h6" sx={{ mb: 1.5, fontFamily: '"Chakra Petch", sans-serif' }}>
+                  <Typography variant="subtitle1" sx={{ mb: 1, fontFamily: '"Chakra Petch", sans-serif', fontWeight: 700 }}>
                     {feature.title}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.5, fontSize: '0.85rem' }}>
                     {feature.desc}
                   </Typography>
                 </Box>
@@ -296,7 +325,7 @@ export default function Home() {
             ))}
           </Grid>
 
-          <Box sx={{ maxWidth: '800px', mx: 'auto' }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {[
               {
                 title: "ขั้นตอนที่ 1: รับบทบาท",
@@ -321,75 +350,54 @@ export default function Home() {
             ].map((step, index) => (
               <Box key={index} sx={{ 
                 display: 'flex', 
-                gap: 3, 
-                mb: 3, 
-                p: { xs: 3, md: 4 }, 
-                bgcolor: 'var(--color-surface)', 
-                borderRadius: 'var(--radius-lg)', 
-                border: '1px solid var(--color-border-subtle)',
-                alignItems: 'flex-start',
-                transition: 'transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: 'var(--shadow-elevated)',
-                  borderColor: 'var(--color-primary-glow)'
-                }
+                gap: 2, 
+                p: 2, 
+                bgcolor: 'rgba(255, 255, 255, 0.03)', 
+                borderRadius: '12px', 
+                border: '1px solid rgba(255, 255, 255, 0.06)',
+                alignItems: 'flex-start'
               }}>
                 <Box sx={{ 
                   flexShrink: 0,
-                  width: '48px',
-                  height: '48px',
+                  width: '36px',
+                  height: '36px',
                   borderRadius: '50%',
-                  bgcolor: 'rgba(255, 60, 60, 0.1)',
-                  color: 'var(--color-primary)',
+                  bgcolor: 'rgba(239, 69, 101, 0.15)',
+                  color: 'var(--color-accent, #ef4565)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontFamily: '"Chakra Petch", sans-serif',
-                  fontSize: '1.5rem',
+                  fontSize: '1.1rem',
                   fontWeight: 'bold',
-                  border: '1px solid var(--color-primary-glow)'
+                  border: '1px solid rgba(239, 69, 101, 0.3)'
                 }}>
                   {index + 1}
                 </Box>
                 <Box>
-                  <Typography variant="h6" sx={{ mb: 1, fontFamily: '"Chakra Petch", sans-serif', color: 'white' }}>
+                  <Typography variant="subtitle1" sx={{ mb: 0.5, fontFamily: '"Chakra Petch", sans-serif', color: 'white', fontWeight: 600 }}>
                     {step.title}
                   </Typography>
-                  <Typography variant="body1" sx={{ color: 'var(--color-ink-muted)', lineHeight: 1.7, fontSize: '1rem' }}>
+                  <Typography variant="body2" sx={{ color: 'var(--color-ink-muted)', lineHeight: 1.6, fontSize: '0.9rem' }}>
                     {step.desc}
                   </Typography>
                 </Box>
               </Box>
             ))}
           </Box>
-        </Container>
-      </Box>
+        </DialogContent>
 
-      {/* Footer CTA */}
-      <Box sx={{ py: 10, textAlign: 'center' }}>
-        <Typography variant="h4" sx={{ mb: 4, fontFamily: '"Chakra Petch", sans-serif' }}>
-          พร้อมที่จะสืบสวนหรือยัง?
-        </Typography>
-        <Button
-          onClick={handleCreateClick}
-          variant="contained"
-          color="error"
-          size="large"
-          sx={{ px: 6, py: 1.5, borderRadius: 'var(--radius-full)' }}
-        >
-          เริ่มเกม
-        </Button>
-      </Box>
-
-      {/* Footer */}
-      <Box sx={{ py: 3, borderTop: '1px solid var(--color-border-subtle)', textAlign: 'center' }}>
-        <Typography variant="body2" color="text.secondary">
-          © {new Date().getFullYear()} CSS FILES. A Multiplayer Mystery Game.
-        </Typography>
-      </Box>
-        </Box>
-      </Fade>
+        <DialogActions sx={{ p: 2, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+          <Button
+            onClick={() => setShowHowToPlay(false)}
+            variant="contained"
+            color="error"
+            sx={{ px: 4, py: 1, borderRadius: '8px', fontFamily: '"Chakra Petch", sans-serif' }}
+          >
+            เข้าใจแล้ว
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Create Room Dialog */}
       <Dialog
