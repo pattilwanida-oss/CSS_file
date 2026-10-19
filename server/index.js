@@ -17,6 +17,12 @@ const io = new Server(httpServer, {
 
 gameLogic.setIo(io);
 
+// A reconnected socket is no longer in its room; rejoin on any game action
+const ensureRoom = (socket, game) => {
+  if (game?.gameId) socket.join(game.gameId);
+  return game;
+};
+
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
 
@@ -57,12 +63,12 @@ io.on('connection', (socket) => {
   });
 
   socket.on('setAnalysis', ({ gamekey, forensicAnalysis }) => {
-    const game = gameLogic.setAnalysis(gamekey, forensicAnalysis);
+    const game = ensureRoom(socket, gameLogic.setAnalysis(gamekey, forensicAnalysis));
     if (game) io.to(game.gameId).emit('gameState', game);
   });
 
   socket.on('setMurdererChoice', async ({ gamekey, choice }) => {
-    let game = await gameLogic.setMurdererChoice(gamekey, choice);
+    let game = ensureRoom(socket, await gameLogic.setMurdererChoice(gamekey, choice));
     if (game) io.to(game.gameId).emit('gameState', game);
 
     if (game?.detective === -1) {
@@ -72,17 +78,17 @@ io.on('connection', (socket) => {
   });
 
   socket.on('passTurn', async ({ gamekey, player }) => {
-    const game = await gameLogic.passTurn(gamekey, player);
+    const game = ensureRoom(socket, await gameLogic.passTurn(gamekey, player));
     if (game) io.to(game.gameId).emit('gameState', game);
   });
 
   socket.on('makeGuess', async ({ gamekey, player, guess }) => {
-    const game = await gameLogic.makeGuess(gamekey, player, guess);
+    const game = ensureRoom(socket, await gameLogic.makeGuess(gamekey, player, guess));
     if (game) io.to(game.gameId).emit('gameState', game);
   });
 
   socket.on('sendChatMessage', ({ gamekey, message }) => {
-    const game = gameLogic.addChatMessage(gamekey, message);
+    const game = ensureRoom(socket, gameLogic.addChatMessage(gamekey, message));
     if (game) io.to(game.gameId).emit('gameState', game);
   });
 
