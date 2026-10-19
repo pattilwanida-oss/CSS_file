@@ -50,6 +50,7 @@ export default function Player() {
   useEffect(() => {
     if (game?.finished) {
       setShowIntroVideo(false);
+      setCluesOpen(false);
       return;
     }
     if (game && game.started) {
@@ -103,7 +104,7 @@ export default function Player() {
       ) : (
         <GamePlayLayout isHost={false} currentPlayer={player} onOpenClues={() => setCluesOpen(true)} />
       )}
-      <ChatBox />
+      {!game.finished && <ChatBox />}
       <CluesModal open={cluesOpen} onClose={() => setCluesOpen(false)} onOpen={() => setCluesOpen(true)} />
     </Box>
   );

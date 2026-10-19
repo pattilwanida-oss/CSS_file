@@ -10,6 +10,7 @@ export function GameProvider({ children }) {
   const [game, setGame] = useState(null);
   const [player, setPlayer] = useState(null);
   const gameIdRef = useRef(null);
+  const finishedRef = useRef(false);
 
   // Rejoin the room after a reconnect or when the tab/app returns to the foreground
   useEffect(() => {
@@ -24,7 +25,12 @@ export function GameProvider({ children }) {
     socket.on('connect', resync);
     document.addEventListener('visibilitychange', onVisible);
     window.addEventListener('online', resync);
+    // Safety net: if a broadcast is missed, catch up on the latest state
+    const poll = setInterval(() => {
+      if (!finishedRef.current) resync();
+    }, 5000);
     return () => {
+      clearInterval(poll);
       socket.off('connect', resync);
       document.removeEventListener('visibilitychange', onVisible);
       window.removeEventListener('online', resync);
@@ -33,6 +39,7 @@ export function GameProvider({ children }) {
 
   useEffect(() => {
     socket.on('gameState', (newGameState) => {
+      finishedRef.current = !!newGameState.finished;
       setGame(newGameState);
       if (player) {
         const updatedPlayer = Object.values(newGameState.players || {}).find(p => p.slug === player.slug);
