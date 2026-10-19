@@ -130,7 +130,9 @@ export default function GamePlayLayout({ isHost, currentPlayer, onOpenClues }) {
               }}>
                 {game.phase === 'voting' 
                   ? 'เลือกผู้ต้องสงสัย เลือกอาวุธ 1 อย่าง + หลักฐาน 1 อย่าง แล้วยืนยันการลงคะแนน'
-                  : 'ทบทวนคำใบ้ ช่วงลงคะแนนจะเริ่มในไม่ช้า...'}
+                  : game.phase === 'resolving'
+                    ? 'กำลังสรุปผลรอบ...'
+                    : 'ทบทวนคำใบ้ ช่วงลงคะแนนจะเริ่มในไม่ช้า...'}
               </Typography>
             </Box>
           )}

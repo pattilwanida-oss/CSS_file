@@ -18,10 +18,14 @@ export default function VoteBar({ guess, onVoteClick, currentPlayer }) {
   const disableActions = !isVotingPhase || hasActed || !currentPlayer;
 
   let buttonText = 'เลือกอาวุธ 1 อย่าง & หลักฐาน 1 อย่าง';
-  if (!isVotingPhase) {
+  if (game?.phase === 'resolving') {
+    buttonText = 'กำลังสรุปผลรอบ...';
+  } else if (!isVotingPhase) {
     buttonText = 'รอช่วงลงคะแนน...';
   } else if (hasActed) {
-    buttonText = 'ส่งผลโหวตแล้ว';
+    buttonText = game.guesses && game.guesses[currentPlayer.index]
+      ? 'ทายไม่ถูก — หมดสิทธิ์ทายแล้ว'
+      : 'ส่งผลโหวตแล้ว';
   } else if (isReadyToVote) {
     buttonText = 'ยืนยันการเดา';
   }

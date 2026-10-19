@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { io } from 'socket.io-client';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || window.location.origin;
@@ -9,6 +9,27 @@ const GameContext = createContext();
 export function GameProvider({ children }) {
   const [game, setGame] = useState(null);
   const [player, setPlayer] = useState(null);
+  const gameIdRef = useRef(null);
+
+  // Rejoin the room after a reconnect or when the tab/app returns to the foreground
+  useEffect(() => {
+    const resync = () => {
+      if (gameIdRef.current && socket.connected) {
+        socket.emit('loadGame', { gameId: gameIdRef.current });
+      }
+    };
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') resync();
+    };
+    socket.on('connect', resync);
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('online', resync);
+    return () => {
+      socket.off('connect', resync);
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('online', resync);
+    };
+  }, []);
 
   useEffect(() => {
     socket.on('gameState', (newGameState) => {
@@ -30,12 +51,14 @@ export function GameProvider({ children }) {
     createGame: (lang) => {
       return new Promise((resolve) => {
         socket.emit('createGame', lang, (response) => {
+          if (response?.gameId) gameIdRef.current = response.gameId;
           resolve(response);
         });
       });
     },
 
     loadGame: (gameId) => {
+      gameIdRef.current = gameId;
       socket.emit('loadGame', { gameId });
     },
 
@@ -80,6 +103,7 @@ export function GameProvider({ children }) {
           if (response.error) {
             resolve(response.error);
           } else {
+            gameIdRef.current = gameId;
             setPlayer(response.player);
             navigate(`/game/${gameId}/player/${slug}`);
             resolve(null);
@@ -90,6 +114,7 @@ export function GameProvider({ children }) {
 
     loadPlayer: ({ game: gameId, player: playerSlug }) => {
       setPlayer((prev) => prev ? prev : { slug: playerSlug });
+      gameIdRef.current = gameId;
       socket.emit('loadGame', { gameId });
     },
 
