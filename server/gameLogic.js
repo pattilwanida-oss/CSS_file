@@ -291,6 +291,7 @@ async function generateInitialAiClues(game, choice) {
 async function checkEndGame(gamekey) {
   const game = games[gamekey];
   if (!game) return;
+  if (game.finished) return game;
 
   const playerCount = Object.keys(game.players).length;
   const totalVoters = game.detective === -1 ? playerCount : playerCount - 1;
@@ -303,24 +304,43 @@ async function checkEndGame(gamekey) {
 
   let updates = {};
 
-  if (
-    game.guesses &&
-    game.guesses.filter(
-      (item) =>
-        item &&
-        item.player === game.murderer &&
-        item.mean === game.murdererChoice?.mean &&
-        item.key === game.murdererChoice?.key
-    ).length > 0
-  ) {
-    updates = { finished: true, winner: 'detectives' };
+  const winningGuesser = game.guesses
+    ? game.guesses.findIndex(
+        (item) =>
+          item &&
+          item.player === game.murderer &&
+          item.mean === game.murdererChoice?.mean &&
+          item.key === game.murdererChoice?.key
+      )
+    : -1;
+  const finishedUpdates = {
+    finished: true,
+    phase: 'finished',
+    phaseEndsAt: null,
+  };
+
+  if (winningGuesser !== -1) {
+    updates = {
+      ...finishedUpdates,
+      winner: 'detectives',
+      endReason: 'correct_guess',
+      winningGuesser,
+    };
   } else if (validGuesses.length === totalVoters) {
-    updates = { finished: true, winner: 'murderer' };
+    updates = {
+      ...finishedUpdates,
+      winner: 'murderer',
+      endReason: 'all_guessed_wrong',
+    };
   } else if (
     game.round === 3 &&
     validGuesses.length + playersPassed.length === totalVoters
   ) {
-    updates = { finished: true, winner: 'murderer' };
+    updates = {
+      ...finishedUpdates,
+      winner: 'murderer',
+      endReason: 'rounds_exhausted',
+    };
   } else {
     const allActed =
       validGuesses.length + playersPassed.length === totalVoters;
@@ -336,6 +356,16 @@ async function checkEndGame(gamekey) {
   }
 
   const updatedGame = { ...game, ...updates };
+  // Commit before any await so late guesses can't overwrite this state
+  games[gamekey] = updatedGame;
+
+  if (updatedGame.finished) {
+    if (timeouts[gamekey]) {
+      clearTimeout(timeouts[gamekey]);
+      delete timeouts[gamekey];
+    }
+    return updatedGame;
+  }
 
   // Generate new clue if round advanced and using AI Game Master
   if (
@@ -346,6 +376,14 @@ async function checkEndGame(gamekey) {
     const clueIndex = updatedGame.forensicAnalysis.length;
     const newCategory = updatedGame.analysis[clueIndex];
     if (newCategory) {
+      // Block further guesses while the clue is generated
+      updatedGame.phase = 'resolving';
+      if (timeouts[gamekey]) {
+        clearTimeout(timeouts[gamekey]);
+        delete timeouts[gamekey];
+      }
+      if (ioInstance) ioInstance.to(updatedGame.gameId).emit('gameState', updatedGame);
+
       const priorClues = updatedGame.analysis
         .slice(0, clueIndex)
         .map((item, idx) => ({
@@ -368,27 +406,12 @@ async function checkEndGame(gamekey) {
     }
   }
 
-  games[gamekey] = updatedGame;
-
-  if (updatedGame.finished) {
-    if (timeouts[gamekey]) {
-      clearTimeout(timeouts[gamekey]);
-      delete timeouts[gamekey];
-    }
-    return updatedGame;
-  }
-
   // If round advanced, start the playing phase for the new round
   if (updatedGame.round > game.round) {
     startPlayingPhase(gamekey);
-  } else {
-    // If not advanced yet, we should see if everyone voted. 
-    // Wait, if not all acted, maybe we are still in voting phase?
-    // Actually, if we are in voting phase, and not everyone acted, the timer is still running.
-    // BUT we cleared it above! So we shouldn't clear it unless the round actually ends or everyone acted.
   }
 
-  return updatedGame;
+  return games[gamekey];
 }
 
 function startPlayingPhase(gamekey) {
@@ -435,7 +458,7 @@ function startVotingPhase(gamekey) {
 
 async function endVotingPhase(gamekey) {
   const game = games[gamekey];
-  if (!game) return;
+  if (!game || game.finished || game.phase !== 'voting') return;
 
   // Auto-pass players who haven't voted
   const playerCount = Object.keys(game.players).length;
@@ -637,7 +660,8 @@ export default {
 
   async passTurn(gamekey, player) {
     const game = games[gamekey];
-    if (!game || game.phase !== 'voting') return game;
+    if (!game || game.finished || game.phase !== 'voting') return game;
+    if (game.passedTurns?.[player.index] || game.guesses?.[player.index]) return game;
     const playerCount = Object.keys(game.players).length;
     const turnsArray = game.passedTurns
       ? [...game.passedTurns]
@@ -649,7 +673,8 @@ export default {
 
   async makeGuess(gamekey, player, guess) {
     const game = games[gamekey];
-    if (!game || game.phase !== 'voting') return game;
+    if (!game || game.finished || game.phase !== 'voting') return game;
+    if (game.passedTurns?.[player.index] || game.guesses?.[player.index]) return game;
     const playerCount = Object.keys(game.players).length;
     const guessesArray = game.guesses
       ? [...game.guesses]

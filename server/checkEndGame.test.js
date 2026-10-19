@@ -76,3 +76,44 @@ test('checkEndGame Tests', async (t) => {
     assert.strictEqual(games[gamekey].winner, 'murderer');
   });
 });
+
+test('end of game state', async (t) => {
+  const gamekey = 'test-room-2';
+  const setup = () => {
+    games[gamekey] = {
+      gameId: 'x',
+      players: { 0: { index: 0 }, 1: { index: 1 }, 2: { index: 2 }, 3: { index: 3 } },
+      detective: 0,
+      murderer: 2,
+      murdererChoice: { mean: 'Knife', key: 'Gloves' },
+      guesses: new Array(4).fill(false),
+      passedTurns: new Array(4).fill(false),
+      round: 1,
+      phase: 'voting',
+      availableClues: 0,
+    };
+  };
+
+  await t.test('correct guess sets finished phase and reason', async () => {
+    setup();
+    const res = await gameLogic.makeGuess(gamekey, { index: 1 }, { player: 2, mean: 'Knife', key: 'Gloves' });
+    assert.strictEqual(res.finished, true);
+    assert.strictEqual(res.phase, 'finished');
+    assert.strictEqual(res.endReason, 'correct_guess');
+    assert.strictEqual(res.winningGuesser, 1);
+  });
+
+  await t.test('actions after game end do nothing', async () => {
+    setup();
+    await gameLogic.makeGuess(gamekey, { index: 1 }, { player: 2, mean: 'Knife', key: 'Gloves' });
+    const res = await gameLogic.passTurn(gamekey, { index: 3 });
+    assert.strictEqual(res.passedTurns[3], false);
+  });
+
+  await t.test('repeat guess from same player is ignored', async () => {
+    setup();
+    await gameLogic.makeGuess(gamekey, { index: 1 }, { player: 3, mean: 'Knife', key: 'Gloves' });
+    await gameLogic.makeGuess(gamekey, { index: 1 }, { player: 2, mean: 'Knife', key: 'Gloves' });
+    assert.notStrictEqual(games[gamekey].finished, true);
+  });
+});

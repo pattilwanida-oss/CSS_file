@@ -1,8 +1,46 @@
-import React, { useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Box, Button, Typography } from '@mui/material';
 
 export default function IntroVideo({ onComplete }) {
   const [currentSubtitleIndex, setCurrentSubtitleIndex] = useState(0);
+  const [mutedByBrowser, setMutedByBrowser] = useState(false);
+  const videoRef = useRef(null);
+  const doneRef = useRef(false);
+
+  const finish = useCallback(() => {
+    if (doneRef.current) return;
+    doneRef.current = true;
+    onComplete();
+  }, [onComplete]);
+
+  // Mobile browsers often block autoplay with sound: retry muted, and never leave the player stuck
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.play().catch(() => {
+        video.muted = true;
+        setMutedByBrowser(true);
+        video.play().catch(() => {});
+      });
+    }
+    const fallback = setTimeout(finish, 60000);
+    const onKey = (e) => {
+      if (['Escape', 'Enter', ' '].includes(e.key)) finish();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      clearTimeout(fallback);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [finish]);
+
+  const handleUnmute = () => {
+    const video = videoRef.current;
+    if (video) {
+      video.muted = false;
+      setMutedByBrowser(false);
+    }
+  };
 
   const narrativeTexts = [
     "คดีฆาตกรรมสะเทือนขวัญกลางฮ่องกงเริ่มต้นขึ้นแล้ว! ทีมนักสืบต้องตามหา วิธีการฆ่า และ หลักฐานสำคัญ จากเบาะแสของนักนิติเวช",
@@ -30,7 +68,8 @@ export default function IntroVideo({ onComplete }) {
       top: 0,
       left: 0,
       width: '100vw',
-      height: '100vh',
+      height: '100dvh',
+      touchAction: 'manipulation',
       bgcolor: 'black',
       zIndex: 9999,
       display: 'flex',
@@ -38,12 +77,14 @@ export default function IntroVideo({ onComplete }) {
       justifyContent: 'center'
     }}>
       <video 
+        ref={videoRef}
         src="/1000007835.mp4" 
         autoPlay 
         playsInline
         onTimeUpdate={handleTimeUpdate}
-        onEnded={onComplete}
-        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+        onEnded={finish}
+        onError={finish}
+        style={{ width: '100%', height: '100%', objectFit: 'contain', pointerEvents: 'none' }}
       />
       
       {/* Subtitles Overlay */}
@@ -80,21 +121,44 @@ export default function IntroVideo({ onComplete }) {
         ))}
       </Box>
 
-      <Typography 
-        onClick={onComplete}
+      <Button
+        onClick={finish}
+        variant="outlined"
         sx={{
           position: 'absolute',
-          bottom: 30,
-          right: 30,
-          color: 'rgba(255,255,255,0.5)',
-          cursor: 'pointer',
+          top: 'calc(env(safe-area-inset-top, 0px) + 16px)',
+          right: 'calc(env(safe-area-inset-right, 0px) + 16px)',
+          zIndex: 2,
+          minWidth: 64,
+          minHeight: 44,
+          px: 2.5,
+          color: 'white',
+          borderColor: 'rgba(255,255,255,0.6)',
+          bgcolor: 'rgba(0,0,0,0.5)',
           fontFamily: '"Chakra Petch", sans-serif',
-          '&:hover': { color: 'white' },
-          pointerEvents: 'auto'
+          '&:hover': { borderColor: 'white', bgcolor: 'rgba(0,0,0,0.7)' },
         }}
       >
         ข้าม
-      </Typography>
+      </Button>
+
+      {mutedByBrowser && (
+        <Button
+          onClick={handleUnmute}
+          size="small"
+          sx={{
+            position: 'absolute',
+            top: 'calc(env(safe-area-inset-top, 0px) + 16px)',
+            left: 'calc(env(safe-area-inset-left, 0px) + 16px)',
+            zIndex: 2,
+            minHeight: 44,
+            color: 'white',
+            bgcolor: 'rgba(0,0,0,0.5)',
+          }}
+        >
+          🔇 แตะเพื่อเปิดเสียง
+        </Button>
+      )}
     </Box>
   );
 }

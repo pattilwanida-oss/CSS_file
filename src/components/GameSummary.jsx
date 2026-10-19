@@ -5,6 +5,14 @@ import GameCard from './GameCard';
 export default function GameSummary({ game }) {
 
   const isDetectivesWin = game.winner === 'detectives';
+  const winnerPlayer = game.winningGuesser != null
+    ? Object.values(game.players).find(p => p.index === game.winningGuesser)
+    : null;
+  const reasonText = {
+    correct_guess: winnerPlayer ? `${winnerPlayer.name} ไขคดีได้ในรอบที่ ${game.round}` : null,
+    all_guessed_wrong: 'ทุกคนใช้สิทธิ์ทายไปหมดแล้วแต่ไม่มีใครทายถูก',
+    rounds_exhausted: 'หมดเวลาสืบสวนครบทุกรอบ',
+  }[game.endReason];
   const murdererPlayer = Object.values(game.players).find(p => p.index === game.murderer);
 
   return (
@@ -62,6 +70,11 @@ export default function GameSummary({ game }) {
             {isDetectivesWin 
               ? 'ไขคดีสำเร็จ ฆาตกรถูกจับได้แล้ว!'
               : 'ความจริงถูกฝังเอาไว้ ฆาตกรหลบหนีไปได้...'}
+            {reasonText && (
+              <Box component="span" sx={{ display: 'block', mt: 0.5, fontSize: '0.85em', fontStyle: 'normal' }}>
+                {reasonText}
+              </Box>
+            )}
           </Typography>
 
           {/* Reveal Section */}
