@@ -48,7 +48,11 @@ export default function Player() {
 
   // Check if we should play the intro video when the game starts
   useEffect(() => {
-    if (game && game.started && !game.finished) {
+    if (game?.finished) {
+      setShowIntroVideo(false);
+      return;
+    }
+    if (game && game.started) {
       const videoKey = `intro_played_${game.gameId}`;
       if (!sessionStorage.getItem(videoKey)) {
         setShowIntroVideo(true);
@@ -63,7 +67,7 @@ export default function Player() {
     return <Lobby isPlayerView={true} />;
   }
 
-  if (showIntroVideo) {
+  if (showIntroVideo && !game.finished) {
     return <IntroVideo onComplete={() => setShowIntroVideo(false)} />;
   }
 
