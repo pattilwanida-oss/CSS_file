@@ -85,7 +85,7 @@ export default function GameHeader({ onOpenClues }) {
           </Button>
         )}
 
-        <PhaseTimer phase={game.phase} phaseEndsAt={game.phaseEndsAt} isFinished={game.finished} />
+        <PhaseTimer phase={game.phase} phaseEndsAt={game.phaseEndsAt} phaseDurationMs={game.phaseDurationMs} isFinished={game.finished} />
         <Tooltip title={'ออกจากเกม'}>
           <IconButton size="small" sx={{ color: 'var(--color-error-main)' }} onClick={() => navigate('/')}>
             <ExitToApp fontSize="small" />

@@ -26,6 +26,10 @@ const ensureRoom = (socket, game) => {
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
 
+  socket.on('syncTime', (callback) => {
+    if (typeof callback === 'function') callback(Date.now());
+  });
+
   socket.on('createGame', (lang, callback) => {
     const game = gameLogic.createGame(lang);
     socket.join(game.gameId);
