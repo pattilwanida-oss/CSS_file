@@ -2,7 +2,27 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { io } from 'socket.io-client';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || window.location.origin;
-const socket = io(BACKEND_URL);
+const socket = io(BACKEND_URL, { transports: ['websocket', 'polling'] });
+
+// Offset between the server clock and this device's clock, so countdowns match on every device
+let serverOffset = 0;
+const offsetSamples = [];
+
+export function getServerNow() {
+  return Date.now() + serverOffset;
+}
+
+function syncClock() {
+  if (!socket.connected) return;
+  const sentAt = Date.now();
+  socket.emit('syncTime', (serverTime) => {
+    const rtt = Date.now() - sentAt;
+    offsetSamples.push({ rtt, offset: serverTime + rtt / 2 - Date.now() });
+    if (offsetSamples.length > 3) offsetSamples.shift();
+    // The sample with the lowest round trip is the most accurate
+    serverOffset = offsetSamples.reduce((best, s) => (s.rtt < best.rtt ? s : best)).offset;
+  });
+}
 
 const GameContext = createContext();
 
@@ -20,18 +40,28 @@ export function GameProvider({ children }) {
       }
     };
     const onVisible = () => {
-      if (document.visibilityState === 'visible') resync();
+      if (document.visibilityState === 'visible') {
+        resync();
+        syncClock();
+      }
     };
-    socket.on('connect', resync);
+    const onConnect = () => {
+      resync();
+      syncClock();
+    };
+    if (socket.connected) syncClock();
+    const clockTimer = setInterval(syncClock, 30000);
+    socket.on('connect', onConnect);
     document.addEventListener('visibilitychange', onVisible);
     window.addEventListener('online', resync);
     // Safety net: if a broadcast is missed, catch up on the latest state
     const poll = setInterval(() => {
       if (!finishedRef.current) resync();
-    }, 5000);
+    }, 2000);
     return () => {
       clearInterval(poll);
-      socket.off('connect', resync);
+      clearInterval(clockTimer);
+      socket.off('connect', onConnect);
       document.removeEventListener('visibilitychange', onVisible);
       window.removeEventListener('online', resync);
     };

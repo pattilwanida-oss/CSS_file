@@ -317,6 +317,7 @@ async function checkEndGame(gamekey) {
     finished: true,
     phase: 'finished',
     phaseEndsAt: null,
+    phaseDurationMs: null,
   };
 
   if (winningGuesser !== -1) {
@@ -423,7 +424,8 @@ function startPlayingPhase(gamekey) {
   }
 
   game.phase = 'playing';
-  game.phaseEndsAt = Date.now() + 2 * 60 * 1000; // 2 minutes
+  game.phaseDurationMs = 2 * 60 * 1000; // 2 minutes
+  game.phaseEndsAt = Date.now() + game.phaseDurationMs;
   
   timeouts[gamekey] = setTimeout(() => {
     startVotingPhase(gamekey);
@@ -444,7 +446,8 @@ function startVotingPhase(gamekey) {
     delete timeouts[gamekey];
   }
   game.phase = 'voting';
-  game.phaseEndsAt = Date.now() + 30 * 1000; // 30 seconds
+  game.phaseDurationMs = 30 * 1000; // 30 seconds
+  game.phaseEndsAt = Date.now() + game.phaseDurationMs;
 
   timeouts[gamekey] = setTimeout(() => {
     endVotingPhase(gamekey);

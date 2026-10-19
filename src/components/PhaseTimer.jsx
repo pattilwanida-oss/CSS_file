@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, LinearProgress } from '@mui/material';
 import { Timer as TimerIcon } from '@mui/icons-material';
+import { getServerNow } from '@/store/GameContext';
 
 
-export default function PhaseTimer({ phase, phaseEndsAt, isFinished }) {
+export default function PhaseTimer({ phase, phaseEndsAt, phaseDurationMs, isFinished }) {
   const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
@@ -13,9 +14,9 @@ export default function PhaseTimer({ phase, phaseEndsAt, isFinished }) {
     }
 
     const updateTimer = () => {
-      const now = Date.now();
+      const now = getServerNow();
       const end = new Date(phaseEndsAt).getTime();
-      const diff = Math.max(0, Math.floor((end - now) / 1000));
+      const diff = Math.max(0, Math.ceil((end - now) / 1000));
       setTimeLeft(diff);
       return diff;
     };
@@ -28,7 +29,7 @@ export default function PhaseTimer({ phase, phaseEndsAt, isFinished }) {
       if (diff <= 0) {
         clearInterval(interval);
       }
-    }, 1000);
+    }, 250);
 
     return () => clearInterval(interval);
   }, [phaseEndsAt, isFinished]);
@@ -48,8 +49,8 @@ export default function PhaseTimer({ phase, phaseEndsAt, isFinished }) {
   const seconds = timeLeft % 60;
   const isUrgent = timeLeft <= 30;
 
-  // Assuming max time is roughly 2 mins (120s) for progress bar
-  const progress = Math.min(100, (timeLeft / 120) * 100);
+  const totalSeconds = (phaseDurationMs || 120000) / 1000;
+  const progress = Math.min(100, (timeLeft / totalSeconds) * 100);
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 2 } }}>
