@@ -244,7 +244,7 @@ export default function Home() {
 
             {/* Info Badges */}
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, justifyContent: 'flex-start' }}>
-              {['ผู้เล่น 3-12 คน', '25-45 นาที', 'เล่นผ่านเบราว์เซอร์เท่านั้น'].map((text) => (
+              {['ผู้เล่น 5-12 คน', 'เล่นผ่านเบราว์เซอร์เท่านั้น'].map((text) => (
                 <Typography key={text} variant="caption" sx={{ 
                   fontFamily: '"Chakra Petch", sans-serif', 
                   background: 'var(--color-surface)',
